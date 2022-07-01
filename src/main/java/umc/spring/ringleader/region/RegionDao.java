@@ -1,5 +1,6 @@
 package umc.spring.ringleader.region;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static java.sql.Types.NULL;
 
+@Slf4j
 @Repository
 public class RegionDao {
 
@@ -27,6 +29,9 @@ public class RegionDao {
 
     // 한개 지역 조회 (상세페이지)
     public GetRegionRes getRegionDetail(int regionId) {
+        log.info("[Region][DAO] : 지역 세부사항");
+
+        // regionId 로 세부사항 조회
         String getRegionQuery = "select * from Region where regionId = ?";
         int getRegionParams = regionId;
         return this.jdbcTemplate.queryForObject(getRegionQuery,
@@ -41,6 +46,7 @@ public class RegionDao {
 
     // 최근 방문 지역 조회 (userId로)
     public GetRegionListRes getRegionRecent(int userId) {
+        log.info("[Region][DAO] : 최근 방문 지역 조회");
         String getUserQuery = "select * from User where userId = ?";
         int getUserParams = userId;
         UserInfoDTO userInfoDTO = this.jdbcTemplate.queryForObject(getUserQuery,
@@ -65,6 +71,9 @@ public class RegionDao {
 
     // 지역 리스트업 (전체) (regionId, placeName 반환)
     public List<GetRegionListRes> getRegionList(int userId) {
+        log.info("[Region][DAO] : 지역 전체 조회");
+
+        // userId 로 최근 방문 지역 조회
         String getUserQuery = "select * from User where userId = ?";
         int getUserParams = userId;
         UserInfoDTO userInfoDTO = this.jdbcTemplate.queryForObject(getUserQuery,
@@ -73,6 +82,9 @@ public class RegionDao {
                         rs.getInt("lastVisitRegionId")),
                 getUserParams);
         int lastVisitRegion = userInfoDTO.getLastVisitRegionId();
+
+
+        // 조회한 최근 방문 지역을 제외한 지역 리스트
         String getRegionQuery = "select * from Region";
         List<GetRegionListRes> rawList = this.jdbcTemplate.query(getRegionQuery,
                 (rs, rowNum) -> new GetRegionListRes(
@@ -86,7 +98,6 @@ public class RegionDao {
             }
         }
         return result;
-
         }
 
 
