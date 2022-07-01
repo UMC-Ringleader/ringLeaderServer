@@ -11,19 +11,23 @@ public enum BaseResponseStatus {
     SUCCESS(true,1000,"요청에 성공하였습니다.");
 
     /**
-     * 2000 : Request 오류
+     * 2000 : User관련 오류
      */
     //Common
 
 
-
     /**
-     * 3000 : Response 오류
+     * 3000 : Review관련 오류
      */
 
 
     /**
-     * 4000 : Database, Server 오류
+     * 5000 : Region관련 오류
+     */
+
+
+    /**
+     * 6000 : Database, Server 오류
      */
 
 
