@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
+import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -39,5 +40,25 @@ public class ContributionRepository {
                         rs.getInt("contribution")
                 )
                 , param);
+    }
+
+    public ContributionWithNickNameByReviewId getCWNBR(int reviewId){
+        String query = "select u.nickName,urc.contribution\n" +
+                "FROM Review as r\n" +
+                "    join(select userId,nickName\n" +
+                "from User as u) u on u.userId = r.userId\n" +
+                "    join(select userId,regionId,contribution\n" +
+                "from UserRegionContribution as urc) urc on urc.userId = r.userId and urc.regionId = r.regionId\n" +
+                "WHERE reviewId = ?";
+
+        int param = reviewId;
+        return jdbcTemplate.queryForObject(query,
+                (rs, rowNum) -> new ContributionWithNickNameByReviewId(
+                        rs.getString("nickName"),
+                        rs.getInt("contribution")
+                )
+                , param);
+
+
     }
 }
