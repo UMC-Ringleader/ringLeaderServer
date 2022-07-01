@@ -1,10 +1,8 @@
 server:
     port:9100
 spring:
-#    application:
-#        name:Dpath
     datasource:
-        url:jdbc:mysql://springstudy.cgllngfx5zdm.ap-northeast-2.rds.amazonaws.com:3306
-        username:admin
-        password:dla23689!!
-        driver-class-name:com.mysql.cj.jdbc.Driver # mysql
+        url: jdbc:mysql://springstudy.cgllngfx5zdm.ap-northeast-2.rds.amazonaws.com:3306/Ringleader
+        username: admin
+        password: dla23689!!
+        driver-class-name: com.mysql.cj.jdbc.Driver # mysql
