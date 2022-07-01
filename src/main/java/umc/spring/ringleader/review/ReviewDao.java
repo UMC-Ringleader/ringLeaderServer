@@ -64,7 +64,7 @@ public class ReviewDao {
 	}
 
 	public void updateLastVisitedRegion(int userId, int regionId) {
-		String modifyUserNameQuery = "update User set lastVistiedRegionId = ? where userId = ?";
+		String modifyUserNameQuery = "update User set lastVisitRegionId = ? where userId = ?";
 		Object[] modifyUserNameParams = new Object[]{regionId, userId}; // 주입될 값들(nickname, userIdx) 순
 		this.jdbcTemplate.update(modifyUserNameQuery, modifyUserNameParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
 	}
