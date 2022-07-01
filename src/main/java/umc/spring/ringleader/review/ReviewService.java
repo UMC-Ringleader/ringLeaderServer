@@ -7,26 +7,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import umc.spring.ringleader.contribution1.ContributionService;
-import umc.spring.ringleader.review.model.dto.PostReviewReq;
-import umc.spring.ringleader.review.model.dto.PostReviewRes;
-import umc.spring.ringleader.review.model.dto.ReviewImgUrl;
-import umc.spring.ringleader.review.model.dto.ReviewRes;
-import umc.spring.ringleader.review.model.dto.ReviewTmp;
+import umc.spring.ringleader.review.model.dto.*;
 
 @Service
 public class ReviewService {
 
 	private final ReviewDao reviewDao;
+	private final ContributionService contributionService;
 
 	@Autowired
-	public ReviewService(ReviewDao reviewDao) {
+	public ReviewService(ReviewDao reviewDao, ContributionService contributionService) {
 		this.reviewDao = reviewDao;
+		this.contributionService = contributionService;
 	}
 
 	public PostReviewRes saveReview(PostReviewReq req) {
 		int savedId = reviewDao.saveReview(req);
 
+		if (req.getPostImages()==null) {
+			contributionService.contributionRaiseByPostReview(req.getUserId(),req.getRegionId(),3);
+		}
+
+		else{
+
+			contributionService.contributionRaiseByPostReview(req.getUserId(),req.getRegionId(),5);
+			for (PostImage p : req.getPostImages()) {
+
+				reviewDao.insertImages(savedId, p);
+			}
+		}
 		return new PostReviewRes(savedId, req.getTitle());
+
+
 	}
 
 	public int deleteReview(int deleteId) {

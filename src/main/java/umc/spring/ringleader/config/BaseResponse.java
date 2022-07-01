@@ -8,7 +8,6 @@ import lombok.Getter;
 
 import static umc.spring.ringleader.config.BaseResponseStatus.SUCCESS;
 
-
 @Getter
 @AllArgsConstructor
 @JsonPropertyOrder({"isSuccess", "code", "message", "result"})

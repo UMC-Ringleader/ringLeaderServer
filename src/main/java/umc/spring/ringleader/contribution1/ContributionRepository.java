@@ -4,6 +4,7 @@ package umc.spring.ringleader.contribution1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import umc.spring.ringleader.contribution1.model.ContributionRanking;
 import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
 import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
 
@@ -59,6 +60,59 @@ public class ContributionRepository {
                 )
                 , param);
 
+    }
+
+    public List<ContributionRanking> getRankingByRegionId(int regionId){
+        String query = "select @rownum := @rownum + 1 AS ranking,\n" +
+                "     u.userId,u.nickName, urc.contribution\n" +
+                "FROM Region as r\n" +
+                "         join(select userId, regionId, contribution\n" +
+                "              FROM UserRegionContribution as urc) urc on urc.regionId = r.regionId\n" +
+                "         join(select userId, nickName\n" +
+                "              FROM User as u) u on u.userId = urc.userId\n" +
+                "        join(SELECT @rownum :=0) TMP\n" +
+                "WHERE r.regionId = ?\n" +
+                "ORDER BY urc.contribution desc ;";
+        int param = regionId;
+        return jdbcTemplate.query(query,
+                (rs, rowNum) -> new ContributionRanking(
+                        rs.getInt("ranking"),
+                        rs.getInt("userId"),
+                        rs.getString("nickName"),
+                        rs.getInt("contribution")
+                )
+                , param);
+    }
+
+    public void contributionRaiseByPostReview(int userId, int regionId){
+        String query = "UPDATE UserRegionContribution SET " +
+                "contribution WHERE userId = ? and regionId = ? ";
+    }
+
+    public int getContribution(int userId, int regionId) {
+        String query = "select contribution\n" +
+                "FROM UserRegionContribution\n" +
+                "WHERE userId= ? and regionId =?;";
+
+        Object[] params = new Object[]{userId, regionId};
+        return jdbcTemplate.queryForObject(query,int.class, params);
+    }
+
+    public int updateContributionRaiseByPostReview(int userId, int regionId, int n){
+        String query = "select contribution\n" +
+                "FROM UserRegionContribution\n" +
+                "WHERE userId= ? and regionId =?;";
+
+        Object[] params = new Object[]{userId, regionId};
+        int contribution = jdbcTemplate.queryForObject(query, int.class,params);
+
+        contribution +=n;
+
+        String queryForUpdate = "UPDATE UserRegionContribution SET contribution = ? WHERE userId = ? and regionId=?;";
+        Object[] paramsForUpdate = new Object[]{contribution, userId, regionId};
+        return this.jdbcTemplate.update(queryForUpdate , paramsForUpdate);
+
 
     }
+
 }
