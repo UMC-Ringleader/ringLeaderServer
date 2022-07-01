@@ -8,7 +8,7 @@ public enum BaseResponseStatus {
      * 1000 : 요청성공
 
      */
-    SUCCESS(true,1000,"요청에 성공하였습니다.");
+    SUCCESS(true,1000,"요청에 성공하였습니다."),
 
     /**
      * 2000 : User관련 오류
@@ -29,6 +29,8 @@ public enum BaseResponseStatus {
     /**
      * 6000 : Database, Server 오류
      */
+
+    REVIEW_NULL(false,6001,"존재하지 않는 리뷰입니다");
 
 
 

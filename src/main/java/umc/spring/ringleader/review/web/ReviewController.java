@@ -1,6 +1,10 @@
 package umc.spring.ringleader.review.web;
 
+import static umc.spring.ringleader.config.BaseResponseStatus.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,7 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.config.BaseResponse;
+import umc.spring.ringleader.config.BaseResponseStatus;
 import umc.spring.ringleader.review.ReviewService;
 import umc.spring.ringleader.review.model.dto.PostReviewReq;
 import umc.spring.ringleader.review.model.dto.PostReviewRes;
@@ -51,4 +57,23 @@ public class ReviewController {
 		PostReviewRes res = reviewService.saveReview(postReviewReq);
 		return new BaseResponse<>(res);
 	}
+
+	@ResponseBody
+	@DeleteMapping("/delete/{reviewId}")
+	public BaseResponse<String> deletePost(@PathVariable int reviewId) {
+		log.debug("Delete Review Id : {}", reviewId);
+
+		try {
+			int i = reviewService.deleteReview(reviewId);
+			if (i == 0) {
+				throw new BaseException(REVIEW_NULL);
+			}
+
+			return new BaseResponse<>(SUCCESS);
+		} catch (BaseException e) {
+			return new BaseResponse<>(e.getStatus());
+		}
+
+	}
+
 }

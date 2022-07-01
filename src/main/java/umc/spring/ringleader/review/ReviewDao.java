@@ -37,4 +37,11 @@ public class ReviewDao {
 		return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
 	}
 
+
+	public int deleteReview(int reviewId) {
+		String deleteUserQuery = "delete from Review where reviewId = ?"; // 해당 userIdx를 만족하는 유저를 삭제하는 쿼리문
+		Object[] deleteIdx = new Object[] {reviewId};
+		return this.jdbcTemplate.update(deleteUserQuery, deleteIdx); //쿼리 요청(삭제했으면 1, 실패했으면 0)
+	}
+
 }

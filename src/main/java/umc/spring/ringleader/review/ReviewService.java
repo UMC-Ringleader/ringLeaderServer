@@ -21,4 +21,10 @@ public class ReviewService {
 
 		return new PostReviewRes(savedId, req.getTitle());
 	}
+
+	public int deleteReview(int deleteId) {
+		int deleteCode = reviewDao.deleteReview(deleteId);
+
+		return deleteCode;
+	}
 }
