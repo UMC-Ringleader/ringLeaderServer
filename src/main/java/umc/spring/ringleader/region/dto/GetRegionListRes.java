@@ -6,10 +6,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GetRegionRes {
+public class GetRegionListRes {
     private int regionId;
     private String placeName;
-    private String image;
-    private String location;
-    private String regionInfo;
 }
