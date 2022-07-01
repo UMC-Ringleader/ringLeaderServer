@@ -29,8 +29,10 @@ public class ReviewService {
 		}
 
 		else{
+
+			contributionService.contributionRaiseByPostReview(req.getUserId(),req.getRegionId(),5);
 			for (PostImage p : req.getPostImages()) {
-				contributionService.contributionRaiseByPostReview(req.getUserId(),req.getRegionId(),5);
+
 				reviewDao.insertImages(savedId, p);
 			}
 		}
