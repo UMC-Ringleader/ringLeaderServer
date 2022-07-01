@@ -1,4 +1,4 @@
-package com.example.Dpath.config;
+package umc.spring.ringleader.config;
 
 import lombok.Getter;
 

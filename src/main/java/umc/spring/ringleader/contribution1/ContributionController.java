@@ -23,11 +23,4 @@ public class ContributionController {
         this.service = service;
     }
 
-    @GetMapping("")
-    public BaseResponse<List<ContributionWithLocation>> getContribution(@RequestParam int userId){
-        List<ContributionWithLocation> contributionWithLocation = service.getContributionWithLocation(userId);
-        return new BaseResponse<>(contributionWithLocation);
-
-    }
-
 }
