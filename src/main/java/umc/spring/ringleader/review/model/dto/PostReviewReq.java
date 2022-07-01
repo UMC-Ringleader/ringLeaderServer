@@ -2,6 +2,8 @@ package umc.spring.ringleader.review.model.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,4 +17,5 @@ public class PostReviewReq {
 	private String hashtag3;
 	private String contents;
 	private int regionId;
+	private List<PostImage> postImages;
 }

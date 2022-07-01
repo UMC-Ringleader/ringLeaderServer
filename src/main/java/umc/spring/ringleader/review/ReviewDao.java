@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import umc.spring.ringleader.review.model.dto.PostImage;
 import umc.spring.ringleader.review.model.dto.PostReviewReq;
 import umc.spring.ringleader.review.model.dto.ReviewImgUrl;
 import umc.spring.ringleader.review.model.dto.ReviewTmp;
@@ -39,6 +40,13 @@ public class ReviewDao {
 
 		String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값을 가져온다.
 		return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
+	}
+
+	public int insertImages(int savedId, PostImage p) {
+		Object[] insertImgParam = {savedId, p.getImage()};
+		String insertImgQuery = "INSERT INTO reviewImgs(reviewId,image) VALUES(?,?)";
+		return jdbcTemplate.update(insertImgQuery, insertImgParam);
+
 	}
 
 

@@ -98,18 +98,19 @@ public class ContributionRepository {
         return jdbcTemplate.queryForObject(query,int.class, params);
     }
 
-    public void updateContributionRaiseByPostReview(int userId, int regionId, int n){
+    public int updateContributionRaiseByPostReview(int userId, int regionId, int n){
         String query = "select contribution\n" +
                 "FROM UserRegionContribution\n" +
                 "WHERE userId= ? and regionId =?;";
 
         Object[] params = new Object[]{userId, regionId};
-        int contribution = jdbcTemplate.queryForObject(query, int.class, params);
+        int contribution = jdbcTemplate.queryForObject(query, int.class,params);
+
         contribution +=n;
 
         String queryForUpdate = "UPDATE UserRegionContribution SET contribution = ? WHERE userId = ? and regionId=?;";
         Object[] paramsForUpdate = new Object[]{contribution, userId, regionId};
-        this.jdbcTemplate.update(query, params);
+        return this.jdbcTemplate.update(queryForUpdate , paramsForUpdate);
 
 
     }
