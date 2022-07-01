@@ -8,6 +8,8 @@ group = 'umc.spring'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -19,13 +21,19 @@ repositories {
 }
 
 dependencies {
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+
+
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    runtimeOnly 'mysql:mysql-connector-java'
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 tasks.named('test') {
