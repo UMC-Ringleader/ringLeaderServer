@@ -10,4 +10,3 @@ spring:
         url: jdbc:mysql://springstudy.cgllngfx5zdm.ap-northeast-2.rds.amazonaws.com:3306/Ringleader
         username: admin
         password: dla23689!!
-
