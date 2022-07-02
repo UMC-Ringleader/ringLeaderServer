@@ -3,17 +3,13 @@ package umc.spring.ringleader.login;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import umc.spring.ringleader.config.BaseException;
-import umc.spring.ringleader.config.BaseResponse;
+import org.springframework.stereotype.Service;
 import umc.spring.ringleader.login.DTO.PostLoginReq;
 import umc.spring.ringleader.login.DTO.PostLoginRes;
 import umc.spring.ringleader.login.DTO.PostSignupReq;
 import umc.spring.ringleader.login.DTO.PostSignupRes;
-import umc.spring.ringleader.review.model.dto.PostReviewReq;
-import umc.spring.ringleader.review.model.dto.PostReviewRes;
 
-import static umc.spring.ringleader.config.Constant.POST_NOT_IMG_REVIEW;
-
+@Service
 public class LoginService {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final LoginDao loginDao;
@@ -43,15 +39,12 @@ public class LoginService {
     /**
      * 이메일 중복 검사 -> 비밀번호 검사
      */
-    @Autowired
     public PostSignupRes retrieveEmail(PostSignupReq postSignupReq){
         // 비밀번호와 비밀번호 확인이 동일한 경우
         if(postSignupReq.getPwd().equals(postSignupReq.getRe_pwd()))
         {
-            int overlap = loginDao.correspondEmail(postSignupReq.getEmail());
-
             // 이메일 중복되는 경우
-            if(overlap == 1) {
+            if(loginDao.isCorrespondEmail(postSignupReq.getEmail())) {
                 return null;
             }
             // 이메일 중복되지 않는 경우
