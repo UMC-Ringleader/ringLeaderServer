@@ -33,4 +33,8 @@ public class RegionService {
         );
         return result;
     }
+
+    public List<GetRegionListRes> getAllRegion() {
+        return regionDao.getAllRegion();
+    }
 }
