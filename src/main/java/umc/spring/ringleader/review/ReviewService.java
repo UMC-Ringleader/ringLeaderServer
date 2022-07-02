@@ -1,5 +1,7 @@
 package umc.spring.ringleader.review;
 
+import static umc.spring.ringleader.config.Constant.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,17 +30,25 @@ public class ReviewService {
 	public PostReviewRes saveReview(PostReviewReq req) {
 		int savedId = reviewDao.saveReview(req);
 
-		//Image가 없는 경우 기여도+3
+		//Image가 없는 경우 기여도 + 5
 		if (req.getPostImages()==null) {
-			contributionService.contributionUpdate(req.getUserId(),req.getRegionId(),3);
+			contributionService.contributionUpdate(
+				req.getUserId(),
+				req.getRegionId(),
+				POST_NOT_IMG_REVIEW
+			);
 		}
 
 		else{
-			//Image가 있는 경우 기여도+5
+			//Image가 있는 경우 기여도 +10
 			//ReviewImage Table에 저장
-			contributionService.contributionUpdate(req.getUserId(),req.getRegionId(),5);
-			for (PostImage p : req.getPostImages()) {
+			contributionService.contributionUpdate(
+				req.getUserId(),
+				req.getRegionId(),
+				POST_IMG_REVIEW
+			);
 
+			for (PostImage p : req.getPostImages()) {
 				reviewDao.insertImages(savedId, p);
 			}
 		}
@@ -52,13 +62,19 @@ public class ReviewService {
 		ReviewSearchTemp tempReview = reviewDao.getUserRegionIdByReviewId(deleteId);
 		// 이미지 있으면
 		if (reviewDao.isImageExist(deleteId)) {
-			// 점수 차감 (-5)
-			contributionService.contributionUpdate(tempReview.getUserId(),tempReview.getRegionId(),-5);
+			// 점수 차감 (-10)
+			contributionService.contributionUpdate(
+				tempReview.getUserId(),
+				tempReview.getRegionId(),
+				DELETE_NOT_IMG_REVIEW);
 			reviewDao.deleteReviewImages(deleteId);
 		}
-		// 이미지 없으면
+		// 이미지 없으면 (-5)
 		else {
-			contributionService.contributionUpdate(tempReview.getUserId(),tempReview.getRegionId(),-3);
+			contributionService.contributionUpdate(
+				tempReview.getUserId(),
+				tempReview.getRegionId(),
+				DELETE_NOT_IMG_REVIEW);
 		}
 		//ReviewId로 Image삭제, Review 삭제
 		int deleteCode = reviewDao.deleteReview(deleteId);
@@ -108,10 +124,6 @@ public class ReviewService {
 				)
 			);
 		}
-
 		return reviewResList;
 	}
-
-
-
 }
