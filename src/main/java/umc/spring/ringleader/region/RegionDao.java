@@ -29,7 +29,7 @@ public class RegionDao {
 
     // 한개 지역 조회 (상세페이지)
     public GetRegionRes getRegionDetail(int regionId) {
-        log.info("[Region][DAO] : 지역 세부사항");
+//        log.info("[Region][DAO] : 지역 세부사항");
 
         // regionId 로 세부사항 조회
         String getRegionQuery = "select * from Region where regionId = ?";
@@ -46,7 +46,7 @@ public class RegionDao {
 
     // 최근 방문 지역 조회 (userId로)
     public GetRegionListRes getRegionRecent(int userId) {
-        log.info("[Region][DAO] : 최근 방문 지역 조회");
+//        log.info("[Region][DAO] : 최근 방문 지역 조회");
         String getUserQuery = "select * from User where userId = ?";
         int getUserParams = userId;
         UserInfoDTO userInfoDTO = this.jdbcTemplate.queryForObject(getUserQuery,
@@ -54,7 +54,7 @@ public class RegionDao {
                         rs.getInt("userId"),
                         rs.getInt("lastVisitRegionId")),
                 getUserParams);
-        if (userInfoDTO.getLastVisitRegionId()!=0) {
+        if (userInfoDTO.getLastVisitRegionId()!=0) { // 최근 방문지역 있으면 그 지역 반환
             String getRegionQuery = "select * from Region where regionId = ?";
             int getRegionParams = userInfoDTO.getLastVisitRegionId();
             return this.jdbcTemplate.queryForObject(getRegionQuery,
@@ -63,7 +63,7 @@ public class RegionDao {
                             rs.getString("placeName")),
                     getRegionParams);
         }
-        else {
+        else { // 없으면 null
             return null;
         }
 
@@ -71,7 +71,7 @@ public class RegionDao {
 
     // 지역 리스트업 (전체) (regionId, placeName 반환)
     public List<GetRegionListRes> getRegionList(int userId) {
-        log.info("[Region][DAO] : 지역 전체 조회");
+//        log.info("[Region][DAO] : 지역 전체 조회");
 
         // userId 로 최근 방문 지역 조회
         String getUserQuery = "select * from User where userId = ?";

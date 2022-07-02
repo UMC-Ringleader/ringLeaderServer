@@ -44,9 +44,7 @@ public class ReviewController {
 	@ResponseBody
 	@PostMapping("/")
 	public BaseResponse<PostReviewRes> addPost(@RequestBody PostReviewReq postReviewReq) {
-		log.debug("Reviewer Id : {}", postReviewReq.getUserId());
-		log.debug("Review Region : {}", postReviewReq.getRegionId());
-		log.debug("Review Title : {}", postReviewReq.getTitle());
+		log.info("[Review][POST] : Review 등록 / reviewId = {}", postReviewReq.getUserId());
 
 		/**
 		예외
@@ -77,7 +75,7 @@ public class ReviewController {
 	@ResponseBody
 	@DeleteMapping("/delete/{reviewId}")
 	public BaseResponse<String> deletePost(@PathVariable int reviewId) {
-		log.info("Delete Review Id : {}", reviewId);
+		log.info("[Review][DELETE] : Review 삭제 / reviewId = {}", reviewId);
 
 		try {
 			int i = reviewService.deleteReview(reviewId);
@@ -100,6 +98,7 @@ public class ReviewController {
 	@ResponseBody
 	@GetMapping("/{regionId}")
 	public BaseResponse<List<ReviewRes>> getRegionReviewsLately(@PathVariable int regionId, @RequestParam String loginUserId) {
+		log.info("[Review][GET] : RegionId로 리뷰 조회 (최신순으로 정렬) / regionId = {}, loginUserId = {}", regionId, loginUserId);
 		//로그인한 경우 최근 방문 동네 반영
 		if (loginUserId != null) {
 			reviewService.updateLastVisitedRegion(Integer.parseInt(loginUserId), regionId);
@@ -120,6 +119,7 @@ public class ReviewController {
 	@GetMapping("/{regionId}/category")
 	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@RequestParam String category,
 		@PathVariable String regionId) {
+		log.info("[Review][GET] : category필터 추가하여 리뷰 조회 / category = {} ,regionId = {}", category, regionId);
 
 		List<ReviewRes> reviewsByCategory = reviewService.getReviewsByCategory(category, Integer.parseInt(regionId));
 
@@ -134,8 +134,8 @@ public class ReviewController {
 	 */
 	@ResponseBody
 	@GetMapping("/profile/{userId}")
-	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@PathVariable int userId, @RequestParam String regionId
-		) {
+	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@PathVariable int userId, @RequestParam String regionId) {
+		log.info("[Review][GET] : 해당 User의 지역별 Review조회 / userId = {} ,regionId = {}", userId, regionId);
 
 		List<ReviewRes> usersReviewByRegion = reviewService.getUsersReviewByRegion(userId, Integer.parseInt(regionId));
 

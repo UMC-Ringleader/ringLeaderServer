@@ -42,7 +42,7 @@ public class FeedbackDao {
 		return jdbcTemplate.update("delete from reviewFeedback where userId= ? and reviewId =? ", userId, reviewId);
 	}
 
-	//comment 받아요기
+	//comment 받아오기
 	public String getComment(int userId,int reviewId){
 		String query = "select comment from reviewFeedback where userId =? and reviewId =?";
 		Object[] params = {userId,reviewId};
