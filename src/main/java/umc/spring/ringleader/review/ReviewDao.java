@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import umc.spring.ringleader.review.model.dto.PostImage;
-import umc.spring.ringleader.review.model.dto.PostReviewReq;
-import umc.spring.ringleader.review.model.dto.ReviewImgUrl;
-import umc.spring.ringleader.review.model.dto.ReviewTmp;
+import umc.spring.ringleader.region.dto.UserInfoDTO;
+import umc.spring.ringleader.review.model.dto.*;
 
 @Repository
 public class ReviewDao {
@@ -47,18 +45,17 @@ public class ReviewDao {
 		Object[] insertImgParam = {savedId, p.getImage()};
 		String insertImgQuery = "INSERT INTO reviewImgs(reviewId,image) VALUES(?,?)";
 		return jdbcTemplate.update(insertImgQuery, insertImgParam);
-
 	}
 
 
 	public void deleteReviewImages(int reviewId) {
-		String deleteUserQuery = "delete from reviewImgs where reviewId = ?"; // 해당 userIdx를 만족하는 유저를 삭제하는 쿼리문
+		String deleteUserQuery = "delete from reviewImgs where reviewId = ?"; // 해당 reviewId 를 만족하는 이미지를 삭제하는 쿼리문
 		Object[] deleteIdx = new Object[] {reviewId};
 		this.jdbcTemplate.update(deleteUserQuery, deleteIdx); //쿼리 요청(삭제했으면 1, 실패했으면 0)
 	}
 
 	public int deleteReview(int reviewId) {
-		String deleteUserQuery = "delete from Review where reviewId = ?"; // 해당 userIdx를 만족하는 유저를 삭제하는 쿼리문
+		String deleteUserQuery = "delete from Review where reviewId = ?"; // 해당 reviewId를 만족하는 리뷰를 삭제하는 쿼리문
 		Object[] deleteIdx = new Object[] {reviewId};
 		return this.jdbcTemplate.update(deleteUserQuery, deleteIdx); //쿼리 요청(삭제했으면 1, 실패했으면 0)
 	}
@@ -137,6 +134,23 @@ public class ReviewDao {
 	public List<String> getReviewImgs(int reviewId) {
 		String getReviewImgs = "select image from reviewImgs where reviewId = ?";
 		return this.jdbcTemplate.queryForList(getReviewImgs, String.class, reviewId);
+	}
+
+	// image 있는 리뷰인지 체크
+	public boolean isImageExist(int reviewId) {
+		String findUserName = "select exists(select * from reviewImgs where reviewId = ?)";
+		Integer result = this.jdbcTemplate.queryForObject(findUserName, Integer.class, reviewId); // 있으면 1, 없으면 0
+		return result==1;
+	}
+
+	public ReviewSearchTemp getUserRegionIdByReviewId(int reviewId) {
+		String getReviewQuery = "select * from Review where reviewId = ?";
+		int getReviewParams = reviewId;
+		return this.jdbcTemplate.queryForObject(getReviewQuery,
+				(rs, rowNum) -> new ReviewSearchTemp(
+						rs.getInt("userId"),
+						rs.getInt("regionId")),
+				getReviewParams);
 	}
 
 }

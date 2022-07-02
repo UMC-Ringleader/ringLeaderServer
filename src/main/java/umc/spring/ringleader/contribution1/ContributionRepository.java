@@ -98,7 +98,7 @@ public class ContributionRepository {
         return jdbcTemplate.queryForObject(query,int.class, params);
     }
 
-    public int updateContributionRaiseByPostReview(int userId, int regionId, int n){
+    public int updateContribution(int userId, int regionId, int n){
         String query = "select contribution\n" +
                 "FROM UserRegionContribution\n" +
                 "WHERE userId= ? and regionId =?;";
@@ -111,8 +111,6 @@ public class ContributionRepository {
         String queryForUpdate = "UPDATE UserRegionContribution SET contribution = ? WHERE userId = ? and regionId=?;";
         Object[] paramsForUpdate = new Object[]{contribution, userId, regionId};
         return this.jdbcTemplate.update(queryForUpdate , paramsForUpdate);
-
-
     }
 
 }

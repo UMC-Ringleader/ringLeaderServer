@@ -49,7 +49,7 @@ public class ContributionService {
     int 형 userId, regionId, n 을 매개변수로 함
     review 내에서 if 문으로 구분하여 사진의 유무를 통해 n 의 값을 인자로 넣어주고 내부에서 contribution 값을 변경함.
      */
-    public void contributionRaiseByPostReview(int userId, int regionId,int n) {
-        repository.updateContributionRaiseByPostReview(userId, regionId, n);
+    public void contributionUpdate(int userId, int regionId, int n) {
+        repository.updateContribution(userId, regionId, n);
     }
 }
