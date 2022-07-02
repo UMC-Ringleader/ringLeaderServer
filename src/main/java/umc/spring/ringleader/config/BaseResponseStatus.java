@@ -14,6 +14,11 @@ public enum BaseResponseStatus {
      * 2000 : User관련 오류
      */
     //Common
+    POST_Login_EMPTY_EMAIL(false,2001,"이메일을 다시 입력해주세요."),
+    POST_Login_EMPTY_PWD(false,2002,"패스워드를 다시 입력해주세요."),
+    POST_SIGNUP_EMPTY_EMAIL(false,2003,"이메일을 다시 입력해주세요."),
+    POST_SIGNUP_INVALID_EMAIL(false,2004,"잘못된 이메일 형식입니다."),
+    POST_SIGNUP_MISMATCH_PASSWORD(false,2005,"비밀번호와 비밀번호 확인이 일치하지 않습니다."),
 
 
     /**
