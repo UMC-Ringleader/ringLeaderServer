@@ -62,6 +62,11 @@ public class ReviewService {
 		return toReviewRes(reviewsByCategory);
 	}
 
+	public List<ReviewRes> getUsersReviewByRegion(int userId, int regionId) {
+		List<ReviewTmp> userReviewsByRegion = reviewDao.getUserReviewsByRegionId(userId, regionId);
+		return toReviewRes(userReviewsByRegion);
+	}
+
 	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps) {
 		List<ReviewRes> reviewResList = new ArrayList<>();
 		for (ReviewTmp reviewTmp : reviewTmps) {
@@ -81,5 +86,7 @@ public class ReviewService {
 
 		return reviewResList;
 	}
+
+
 
 }

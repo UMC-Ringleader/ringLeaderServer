@@ -93,6 +93,21 @@ public class ReviewDao {
 			), regionId, category);
 	}
 
+	public List<ReviewTmp> getUserReviewsByRegionId(int userId, int regionId) {
+		String getReviewsQuery = "select * from Review where userId = ? AND regionId = ?";
+		return this.jdbcTemplate.query(getReviewsQuery,
+			(rs, rowNum) -> new ReviewTmp(
+				rs.getInt("reviewId"),
+				rs.getString("title"),
+				rs.getString("category"),
+				rs.getString("hashtag1"),
+				rs.getString("hashtag2"),
+				rs.getString("hashtag3"),
+				rs.getString("contents"),
+				rs.getInt("userId")
+			), userId, regionId);
+	}
+
 
 	/*
 	Login / User 부분에 어울림

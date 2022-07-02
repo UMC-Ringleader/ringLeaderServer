@@ -98,9 +98,19 @@ public class ReviewController {
 	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@RequestParam String category,
 		@PathVariable String regionId) {
 
-		List<ReviewRes> reviewsByRegion = reviewService.getReviewsByCategory(category, Integer.parseInt(regionId));
+		List<ReviewRes> reviewsByCategory = reviewService.getReviewsByCategory(category, Integer.parseInt(regionId));
 
-		return new BaseResponse<>(reviewsByRegion);
+		return new BaseResponse<>(reviewsByCategory);
+	}
+
+	@ResponseBody
+	@GetMapping("/profile/{userId}")
+	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@PathVariable int userId, @RequestParam String regionId
+		) {
+
+		List<ReviewRes> usersReviewByRegion = reviewService.getUsersReviewByRegion(userId, Integer.parseInt(regionId));
+
+		return new BaseResponse<>(usersReviewByRegion);
 	}
 
 
