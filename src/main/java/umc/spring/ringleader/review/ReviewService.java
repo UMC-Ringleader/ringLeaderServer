@@ -27,13 +27,13 @@ public class ReviewService {
 
 		//Image가 없는 경우 기여도+3
 		if (req.getPostImages()==null) {
-			contributionService.contributionRaiseByPostReview(req.getUserId(),req.getRegionId(),3);
+			contributionService.contributionUpdate(req.getUserId(),req.getRegionId(),3);
 		}
 
 		else{
 			//Image가 있는 경우 기여도+5
 			//ReviewImage Table에 저장
-			contributionService.contributionRaiseByPostReview(req.getUserId(),req.getRegionId(),5);
+			contributionService.contributionUpdate(req.getUserId(),req.getRegionId(),5);
 			for (PostImage p : req.getPostImages()) {
 
 				reviewDao.insertImages(savedId, p);
@@ -45,8 +45,19 @@ public class ReviewService {
 	}
 
 	public int deleteReview(int deleteId) {
+		// 삭제할 리뷰의 점수조작을 위한 간단한 정보 받아옴 (userId, regionId)
+		ReviewSearchTemp tempReview = reviewDao.getUserRegionIdByReviewId(deleteId);
+		// 이미지 있으면
+		if (reviewDao.isImageExist(deleteId)) {
+			// 점수 차감 (-5)
+			contributionService.contributionUpdate(tempReview.getUserId(),tempReview.getRegionId(),-5);
+			reviewDao.deleteReviewImages(deleteId);
+		}
+		// 이미지 없으면
+		else {
+			contributionService.contributionUpdate(tempReview.getUserId(),tempReview.getRegionId(),-3);
+		}
 		//ReviewId로 Image삭제, Review 삭제
-		reviewDao.deleteReviewImages(deleteId);
 		int deleteCode = reviewDao.deleteReview(deleteId);
 
 		return deleteCode;

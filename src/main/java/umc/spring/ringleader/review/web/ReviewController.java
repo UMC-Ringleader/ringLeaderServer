@@ -77,7 +77,7 @@ public class ReviewController {
 	@ResponseBody
 	@DeleteMapping("/delete/{reviewId}")
 	public BaseResponse<String> deletePost(@PathVariable int reviewId) {
-		log.debug("Delete Review Id : {}", reviewId);
+		log.info("Delete Review Id : {}", reviewId);
 
 		try {
 			int i = reviewService.deleteReview(reviewId);
