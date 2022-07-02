@@ -93,5 +93,15 @@ public class ReviewController {
 		return new BaseResponse<>(reviewsByRegion);
 	}
 
+	@ResponseBody
+	@GetMapping("/{regionId}/category")
+	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@RequestParam String category,
+		@PathVariable String regionId) {
+
+		List<ReviewRes> reviewsByRegion = reviewService.getReviewsByCategory(category, Integer.parseInt(regionId));
+
+		return new BaseResponse<>(reviewsByRegion);
+	}
+
 
 }

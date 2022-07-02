@@ -57,6 +57,11 @@ public class ReviewService {
 		return toReviewRes(reviewTmps);
 	}
 
+	public List<ReviewRes> getReviewsByCategory(String category, int regionId) {
+		List<ReviewTmp> reviewsByCategory = reviewDao.getReviewsByCategory(category, regionId);
+		return toReviewRes(reviewsByCategory);
+	}
+
 	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps) {
 		List<ReviewRes> reviewResList = new ArrayList<>();
 		for (ReviewTmp reviewTmp : reviewTmps) {
