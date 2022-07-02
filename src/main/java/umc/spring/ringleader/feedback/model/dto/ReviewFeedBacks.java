@@ -13,5 +13,5 @@ import lombok.Setter;
 public class ReviewFeedBacks {
 	private int likeCount; //좋아요
 	private int exactInfoCount; //정확한 정보에요
-	private int unreliable; //광고 같아요
+	private int unreliable; //광고같아요
 }

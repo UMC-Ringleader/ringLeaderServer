@@ -1,15 +1,12 @@
 package umc.spring.ringleader.feedback.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.extern.slf4j.Slf4j;
 import umc.spring.ringleader.config.BaseResponse;
 import umc.spring.ringleader.feedback.FeedbackService;
+import umc.spring.ringleader.feedback.model.dto.BodyForReviewFeedBack;
 import umc.spring.ringleader.feedback.model.dto.ReviewFeedBacks;
 
 @Slf4j
@@ -31,4 +28,11 @@ public class FeedbackController {
 		return new BaseResponse<>(feedbacks);
 	}
 
+	//요청바디를 담기 위해서 형식적으로 바디를 생성해 주었으며 userId, reviewId, comment 를 담고있다.
+	@PostMapping("")
+	public BaseResponse<String> checkFeedback(@RequestBody BodyForReviewFeedBack bfrf) {
+		String result = feedbackService.createOrDeleteReviewFeedback(bfrf.getUserId(), bfrf.getReviewId(), bfrf.getComment());
+
+		return new BaseResponse<>(result);
+	}
 }

@@ -36,4 +36,21 @@ public class FeedbackService {
 
 		return new ReviewFeedBacks(likeCnt, exactInfoCnt, unreliableCnt);
 	}
+
+	public String createOrDeleteReviewFeedback(int userId, int reviewId,String comments) {
+
+		int checking = feedbackDao.existingVerification(userId, reviewId);
+
+		if (checking == 0) {
+			//존재하지 않는경우 -> 추가
+			feedbackDao.createFeedback(userId, reviewId,comments);
+			return "피드백이 추가되었습니다.";
+		}
+		else {
+			//존재하는 경우 -> 삭제
+			feedbackDao.deleteFeedback(userId, reviewId);
+			return "피드백이 삭제되었습니다.";
+		}
+	}
+
 }
