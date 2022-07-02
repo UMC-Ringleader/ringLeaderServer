@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import umc.spring.ringleader.contribution1.ContributionService;
+import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
 import umc.spring.ringleader.review.model.dto.*;
 
 @Service
@@ -24,12 +25,14 @@ public class ReviewService {
 	public PostReviewRes saveReview(PostReviewReq req) {
 		int savedId = reviewDao.saveReview(req);
 
+		//Image가 없는 경우 기여도+3
 		if (req.getPostImages()==null) {
 			contributionService.contributionRaiseByPostReview(req.getUserId(),req.getRegionId(),3);
 		}
 
 		else{
-
+			//Image가 있는 경우 기여도+5
+			//ReviewImage Table에 저장
 			contributionService.contributionRaiseByPostReview(req.getUserId(),req.getRegionId(),5);
 			for (PostImage p : req.getPostImages()) {
 
@@ -42,6 +45,8 @@ public class ReviewService {
 	}
 
 	public int deleteReview(int deleteId) {
+		//ReviewId로 Image삭제, Review 삭제
+		reviewDao.deleteReviewImages(deleteId);
 		int deleteCode = reviewDao.deleteReview(deleteId);
 
 		return deleteCode;
@@ -53,16 +58,45 @@ public class ReviewService {
 
 	public List<ReviewRes> getReviewsByRegion(int regionId) {
 		List<ReviewTmp> reviewTmps = reviewDao.getReviewsByRegion(regionId);
+		return toReviewRes(reviewTmps);
+	}
+
+	public List<ReviewRes> getReviewsByCategory(String category, int regionId) {
+		List<ReviewTmp> reviewsByCategory = reviewDao.getReviewsByCategory(category, regionId);
+		return toReviewRes(reviewsByCategory);
+	}
+
+	public List<ReviewRes> getUsersReviewByRegion(int userId, int regionId) {
+		List<ReviewTmp> userReviewsByRegion = reviewDao.getUserReviewsByRegionId(userId, regionId);
+		return toReviewRes(userReviewsByRegion);
+	}
+
+	/*
+		ReviewDao에선 ReviewTmp 타입으로 응답
+		최종 반환 결과인 ReviewRes로 변환하는 메서드
+		ReviewRes로는 ReviewTmp에서
+		리뷰 작성자의 닉네임, 지역 기여도, reviewImage가 추가됨
+	*/
+	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps) {
 		List<ReviewRes> reviewResList = new ArrayList<>();
 		for (ReviewTmp reviewTmp : reviewTmps) {
-			String userName = reviewDao.getUserName(reviewTmp.getUserId());
-			int contribution = reviewDao.getContributionByRegion(reviewTmp.getUserId(), regionId);
+			ContributionWithNickNameByReviewId contributionNickname =
+				contributionService.ContributionWithNickNameByReviewId(reviewTmp.getReviewId());
+
 			List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
 
-			reviewResList.add(reviewTmp.toReviewRes(userName, contribution, reviewImgs));
+			reviewResList.add(
+				reviewTmp.toReviewRes(
+					contributionNickname.getNickName(),
+					contributionNickname.getContribution(),
+					reviewImgs
+				)
+			);
 		}
 
 		return reviewResList;
 	}
+
+
 
 }
