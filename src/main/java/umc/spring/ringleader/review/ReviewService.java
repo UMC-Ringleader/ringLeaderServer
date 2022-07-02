@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import umc.spring.ringleader.contribution1.ContributionService;
 import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
+import umc.spring.ringleader.feedback.FeedbackService;
 import umc.spring.ringleader.review.model.dto.*;
 
 @Service
@@ -15,11 +16,13 @@ public class ReviewService {
 
 	private final ReviewDao reviewDao;
 	private final ContributionService contributionService;
+	private final FeedbackService feedbackService;
 
 	@Autowired
-	public ReviewService(ReviewDao reviewDao, ContributionService contributionService) {
+	public ReviewService(ReviewDao reviewDao, ContributionService contributionService, FeedbackService feedbackService) {
 		this.reviewDao = reviewDao;
 		this.contributionService = contributionService;
+		this.feedbackService = feedbackService;
 	}
 
 	public PostReviewRes saveReview(PostReviewReq req) {
@@ -86,7 +89,7 @@ public class ReviewService {
 		ReviewDao에선 ReviewTmp 타입으로 응답
 		최종 반환 결과인 ReviewRes로 변환하는 메서드
 		ReviewRes로는 ReviewTmp에서
-		리뷰 작성자의 닉네임, 지역 기여도, reviewImage가 추가됨
+		리뷰 작성자의 닉네임, 지역 기여도, reviewImage가 추가됨 + 피드백 정보
 	*/
 	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps) {
 		List<ReviewRes> reviewResList = new ArrayList<>();
@@ -100,7 +103,8 @@ public class ReviewService {
 				reviewTmp.toReviewRes(
 					contributionNickname.getNickName(),
 					contributionNickname.getContribution(),
-					reviewImgs
+					reviewImgs,
+					feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId())
 				)
 			);
 		}

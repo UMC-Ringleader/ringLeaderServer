@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import umc.spring.ringleader.feedback.model.dto.ReviewFeedBacks;
 
 @Getter
 @Setter
@@ -22,4 +23,5 @@ public class ReviewRes {
 	private String hashtag3;
 	private String contents;
 	private List<String> imgUrls;
+	private ReviewFeedBacks reviewFeedBacks;
 }
