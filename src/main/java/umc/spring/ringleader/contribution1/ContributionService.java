@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import umc.spring.ringleader.contribution1.model.ContributionRanking;
 import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
 import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
+import umc.spring.ringleader.region.RegionService;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,10 +14,12 @@ import java.util.Optional;
 public class ContributionService {
 
     private final ContributionRepository repository;
+    private final RegionService regionService;
 
     @Autowired
-    public ContributionService(ContributionRepository repository) {
+    public ContributionService(ContributionRepository repository, RegionService regionService) {
         this.repository = repository;
+        this.regionService = regionService;
     }
 
     //지역별 전체 ranking 조회 (API O)
@@ -52,4 +55,10 @@ public class ContributionService {
     public void contributionUpdate(int userId, int regionId, int n) {
         repository.updateContribution(userId, regionId, n);
     }
+
+    public void initializeUserRegionContribution(int userId) {
+        repository.initializeUserRegionContribution(userId, regionService.getAllRegion());
+
+    }
+
 }

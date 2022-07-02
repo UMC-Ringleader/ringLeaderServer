@@ -100,5 +100,12 @@ public class RegionDao {
         return result;
         }
 
-
-    }
+    public List<GetRegionListRes> getAllRegion() {
+        // 조회한 최근 방문 지역을 제외한 지역 리스트
+        String getRegionQuery = "select * from Region";
+        return this.jdbcTemplate.query(getRegionQuery,
+                (rs, rowNum) -> new GetRegionListRes(
+                        rs.getInt("regionId"),
+                        rs.getString("placeName")));
+        }
+}
