@@ -49,4 +49,10 @@ public class FeedbackDao {
 		return jdbcTemplate.queryForObject(query, String.class, params);
 	}
 
+
+	public int getRegionIdByReviewId(int reviewId) {
+		String getReviewImgs = "select regionId from Review where reviewId = ?";
+		return this.jdbcTemplate.queryForObject(getReviewImgs, Integer.class, reviewId);
+	}
+
 }
