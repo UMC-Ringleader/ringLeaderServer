@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import umc.spring.ringleader.contribution1.ContributionService;
+import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
 import umc.spring.ringleader.review.model.dto.*;
 
 @Service
@@ -53,13 +54,24 @@ public class ReviewService {
 
 	public List<ReviewRes> getReviewsByRegion(int regionId) {
 		List<ReviewTmp> reviewTmps = reviewDao.getReviewsByRegion(regionId);
+		return toReviewRes(reviewTmps);
+	}
+
+	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps) {
 		List<ReviewRes> reviewResList = new ArrayList<>();
 		for (ReviewTmp reviewTmp : reviewTmps) {
-			String userName = reviewDao.getUserName(reviewTmp.getUserId());
-			int contribution = reviewDao.getContributionByRegion(reviewTmp.getUserId(), regionId);
+			ContributionWithNickNameByReviewId contributionNickname =
+				contributionService.ContributionWithNickNameByReviewId(reviewTmp.getReviewId());
+
 			List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
 
-			reviewResList.add(reviewTmp.toReviewRes(userName, contribution, reviewImgs));
+			reviewResList.add(
+				reviewTmp.toReviewRes(
+					contributionNickname.getNickName(),
+					contributionNickname.getContribution(),
+					reviewImgs
+				)
+			);
 		}
 
 		return reviewResList;
