@@ -1,12 +1,21 @@
 package umc.spring.ringleader.login;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 import umc.spring.ringleader.login.DTO.PostLoginReq;
 import umc.spring.ringleader.login.DTO.PostSignupReq;
 
+import javax.sql.DataSource;
+
+@Repository
 public class LoginDao {
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
     /**
      * 이메일로 비밀번호 조회
      *
@@ -47,10 +56,11 @@ public class LoginDao {
      * @param email
      * @return
 */
-    public Integer correspondEmail(String email) {
+    public boolean isCorrespondEmail(String email) {
         // 있으면 1, 없으면 0
         String getEmailOverlapQuery = "select exists(select userId from User where email = ?)";
-        return this.jdbcTemplate.queryForObject(getEmailOverlapQuery, int.class, email);
+        Integer flag = this.jdbcTemplate.queryForObject(getEmailOverlapQuery, Integer.class, email);
+        return flag == 1;
     }
 
     public int saveUser(PostSignupReq req) {
@@ -64,6 +74,6 @@ public class LoginDao {
         this.jdbcTemplate.update(saveUserQuery, saveUserParams);
 
         String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된 User id값을 가져온다.
-        return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class); //UserId 반환
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery, Integer.class); //UserId 반환
     }
 }

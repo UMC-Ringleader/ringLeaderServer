@@ -1,5 +1,6 @@
 package umc.spring.ringleader.login;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,33 +11,31 @@ import umc.spring.ringleader.login.DTO.PostLoginRes;
 import umc.spring.ringleader.login.DTO.PostSignupReq;
 import umc.spring.ringleader.login.DTO.PostSignupRes;
 
+@Slf4j
 @RestController
 @RequestMapping("/login")
 public class LoginController {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private final LoginService LoginService;
+    private final LoginService loginService;
 
-
-
-
-    public LoginController(LoginService LoginService) {
-        this.LoginService = LoginService;
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
     }
 
-    @ResponseBody
-    @PostMapping("/login")
+
     /**
      * 로그인 API
      * 1. 이메일 대조
      * 2. PW 대조
      * 3. 성공시 userId 리턴
-      */
-
+     */
+    @ResponseBody
+    @PostMapping("/login")
     public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq postLoginReq) {
-
-        PostLoginRes postLoginRes = LoginService.retrievePwdByEmail(postLoginReq);
+        log.info("[Login][POST] : 로그인 API / email = {}", postLoginReq.getEmail());
+        PostLoginRes postLoginRes = loginService.retrievePwdByEmail(postLoginReq);
         return new BaseResponse<>(postLoginRes);
         /**try{
             if(postLoginReq.getEmail() == null)
@@ -52,16 +51,16 @@ public class LoginController {
         */
     }
 
-    @ResponseBody
-    @PostMapping
     /**
      * 회원가입 API
      * 1. 이메일 중복 검사
      * 2. 비밀번호, 비밀번호 확인 대조
      */
-
+    @ResponseBody
+    @PostMapping
     public BaseResponse<PostSignupRes> signup(@RequestBody PostSignupReq postSignupReq) {
-        PostSignupRes postSignupRes = LoginService.retrieveEmail(postSignupReq);
+        log.info("[Login][POST] : 회원가입 API / email = {}", postSignupReq.getEmail());
+        PostSignupRes postSignupRes = loginService.retrieveEmail(postSignupReq);
         return new BaseResponse<>(postSignupRes);
         /**
         if (postSignupReq.getEmail() == null) {
