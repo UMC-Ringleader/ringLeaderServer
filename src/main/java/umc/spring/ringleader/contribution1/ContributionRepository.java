@@ -133,6 +133,8 @@ public class ContributionRepository {
                     region.getRegionId(),
                     0
             };
+
+            this.jdbcTemplate.update(initUserContribution , initUserContributionParam);
         }
     }
 }

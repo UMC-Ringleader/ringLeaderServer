@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import umc.spring.ringleader.contribution1.ContributionService;
 import umc.spring.ringleader.login.DTO.PostLoginReq;
 import umc.spring.ringleader.login.DTO.PostLoginRes;
 import umc.spring.ringleader.login.DTO.PostSignupReq;
@@ -14,11 +16,16 @@ import umc.spring.ringleader.login.DTO.PostUserDetailReq;
 public class LoginService {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final LoginDao loginDao;
+    private final ContributionService contributionService;
 
     @Autowired
-    public LoginService(LoginDao loginDao) {
+
+    public LoginService(LoginDao loginDao, ContributionService contributionService) {
         this.loginDao = loginDao;
+        this.contributionService = contributionService;
     }
+
+
 
     /**
      * 이메일 통해 비밀번호 조회
@@ -62,6 +69,7 @@ public class LoginService {
     public String saveUserDetail(int userId, PostUserDetailReq req) {
         int updateCode = loginDao.saveUserDetail(userId, req);
         if (updateCode == 1) {
+            contributionService.initializeUserRegionContribution(userId);
             return "회원 가입 완료!";
         }
 
