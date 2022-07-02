@@ -10,6 +10,7 @@ import umc.spring.ringleader.login.DTO.PostLoginReq;
 import umc.spring.ringleader.login.DTO.PostLoginRes;
 import umc.spring.ringleader.login.DTO.PostSignupReq;
 import umc.spring.ringleader.login.DTO.PostSignupRes;
+import umc.spring.ringleader.login.DTO.PostUserDetailReq;
 
 @Slf4j
 @RestController
@@ -74,5 +75,13 @@ public class LoginController {
             return new BaseResponse<>(POST_SIGNUP_MISMATCH_PASSWORD);
         }
          */
+    }
+
+    @ResponseBody
+    @PatchMapping("{userId}")
+    public BaseResponse<String> addUserDetail(
+        @RequestBody PostUserDetailReq req, @PathVariable int userId
+    ) {
+        return new BaseResponse<>(loginService.saveUserDetail(userId, req));
     }
 }
