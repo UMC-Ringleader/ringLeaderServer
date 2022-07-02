@@ -8,6 +8,7 @@ import umc.spring.ringleader.login.DTO.PostLoginReq;
 import umc.spring.ringleader.login.DTO.PostLoginRes;
 import umc.spring.ringleader.login.DTO.PostSignupReq;
 import umc.spring.ringleader.login.DTO.PostSignupRes;
+import umc.spring.ringleader.login.DTO.PostUserDetailReq;
 
 @Service
 public class LoginService {
@@ -56,5 +57,14 @@ public class LoginService {
         else {
             return null;
         }
+    }
+
+    public String saveUserDetail(int userId, PostUserDetailReq req) {
+        int updateCode = loginDao.saveUserDetail(userId, req);
+        if (updateCode == 1) {
+            return "회원 가입 완료!";
+        }
+
+        return "회원 가입 실패";
     }
 }
