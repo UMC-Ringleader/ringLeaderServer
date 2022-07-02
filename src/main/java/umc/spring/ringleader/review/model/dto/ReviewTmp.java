@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import umc.spring.ringleader.feedback.model.dto.ReviewFeedBacks;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class ReviewTmp {
 	private String contents;
 	private int userId;
 	
-	public ReviewRes toReviewRes(String userName, int userContribution, List<String> imgUrls) {
+	public ReviewRes toReviewRes(String userName, int userContribution, List<String> imgUrls, ReviewFeedBacks reviewFeedBacks) {
 		return new ReviewRes(
 			userName,
 			userContribution,
@@ -32,7 +33,8 @@ public class ReviewTmp {
 			hashtag2,
 			hashtag3,
 			contents,
-			imgUrls
+			imgUrls,
+			reviewFeedBacks
 		);
 	}
 }

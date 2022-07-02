@@ -61,7 +61,7 @@ public class ReviewDao {
 	}
 
 	public List<ReviewTmp> getReviewsByRegion(int regionId) {
-		String getReviewsQuery = "select * from Review where regionId = ?";
+		String getReviewsQuery = "select * from Review where regionId = ? ORDER BY created_At DESC;";
 		return this.jdbcTemplate.query(getReviewsQuery,
 			(rs, rowNum) -> new ReviewTmp(
 				rs.getInt("reviewId"),
@@ -76,7 +76,7 @@ public class ReviewDao {
 	}
 
 	public void updateLastVisitedRegion(int userId, int regionId) {
-		String modifyUserNameQuery = "update User set lastVisitRegionId = ? where userId = ? ORDER BY created_At DESC;";
+		String modifyUserNameQuery = "update User set lastVisitRegionId = ? where userId = ?";
 		Object[] modifyUserNameParams = new Object[]{regionId, userId};
 		this.jdbcTemplate.update(modifyUserNameQuery, modifyUserNameParams);
 	}
