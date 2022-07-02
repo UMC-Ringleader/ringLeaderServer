@@ -1,6 +1,7 @@
 package umc.spring.ringleader.contribution1;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,6 @@ import javax.sql.DataSource;
 import java.util.List;
 
 @Repository
-
 public class ContributionRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -42,6 +42,7 @@ public class ContributionRepository {
                 )
                 , param);
     }
+
 
     public ContributionWithNickNameByReviewId getCWNBR(int reviewId){
         String query = "select u.nickName,urc.contribution\n" +
@@ -84,6 +85,7 @@ public class ContributionRepository {
                 , param);
     }
 
+
     public void contributionRaiseByPostReview(int userId, int regionId){
         String query = "UPDATE UserRegionContribution SET " +
                 "contribution WHERE userId = ? and regionId = ? ";
@@ -98,6 +100,13 @@ public class ContributionRepository {
         return jdbcTemplate.queryForObject(query,int.class, params);
     }
 
+    /**
+     * 기여도 조작 메서드
+     * @param userId
+     * @param regionId
+     * @param n (가감 상수)
+     * @return
+     */
     public int updateContribution(int userId, int regionId, int n){
         String query = "select contribution\n" +
                 "FROM UserRegionContribution\n" +
