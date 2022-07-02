@@ -36,6 +36,11 @@ public class ReviewController {
 		this.reviewService = reviewService;
 	}
 
+	/**
+	 * Review 등록 메서드
+	 * @param postReviewReq
+	 * @return PostReviewRes
+	 */
 	@ResponseBody
 	@PostMapping("/")
 	public BaseResponse<PostReviewRes> addPost(@RequestBody PostReviewReq postReviewReq) {
@@ -63,6 +68,12 @@ public class ReviewController {
 		return new BaseResponse<>(res);
 	}
 
+	/**
+	 * Review 삭제 메서드
+	 * @param reviewId
+	 * reviewId에 해당하는 이미지도 모두 삭제
+	 * @return
+	 */
 	@ResponseBody
 	@DeleteMapping("/delete/{reviewId}")
 	public BaseResponse<String> deletePost(@PathVariable int reviewId) {
@@ -80,10 +91,16 @@ public class ReviewController {
 		}
 	}
 
+	/**
+	 * RegionId로 리뷰 조회 (최신순으로 정렬)
+	 * @param regionId
+	 * @param loginUserId (Nullable)
+	 * @return
+	 */
 	@ResponseBody
 	@GetMapping("/{regionId}")
 	public BaseResponse<List<ReviewRes>> getRegionReviewsLately(@PathVariable int regionId, @RequestParam String loginUserId) {
-		//로그인한 경우 최근 방문 동네 반영해주어야 함
+		//로그인한 경우 최근 방문 동네 반영
 		if (loginUserId != null) {
 			reviewService.updateLastVisitedRegion(Integer.parseInt(loginUserId), regionId);
 		}
@@ -93,6 +110,12 @@ public class ReviewController {
 		return new BaseResponse<>(reviewsByRegion);
 	}
 
+	/**
+	 * category필터 추가하여 리뷰 조회
+	 * @param category
+	 * @param regionId
+	 * @return
+	 */
 	@ResponseBody
 	@GetMapping("/{regionId}/category")
 	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@RequestParam String category,
@@ -103,6 +126,12 @@ public class ReviewController {
 		return new BaseResponse<>(reviewsByCategory);
 	}
 
+	/**
+	 * 해당 User의 지역별 Review조회
+	 * @param userId
+	 * @param regionId
+	 * @return
+	 */
 	@ResponseBody
 	@GetMapping("/profile/{userId}")
 	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@PathVariable int userId, @RequestParam String regionId

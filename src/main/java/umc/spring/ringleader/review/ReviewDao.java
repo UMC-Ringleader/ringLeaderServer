@@ -51,6 +51,12 @@ public class ReviewDao {
 	}
 
 
+	public void deleteReviewImages(int reviewId) {
+		String deleteUserQuery = "delete from reviewImgs where reviewId = ?"; // 해당 userIdx를 만족하는 유저를 삭제하는 쿼리문
+		Object[] deleteIdx = new Object[] {reviewId};
+		this.jdbcTemplate.update(deleteUserQuery, deleteIdx); //쿼리 요청(삭제했으면 1, 실패했으면 0)
+	}
+
 	public int deleteReview(int reviewId) {
 		String deleteUserQuery = "delete from Review where reviewId = ?"; // 해당 userIdx를 만족하는 유저를 삭제하는 쿼리문
 		Object[] deleteIdx = new Object[] {reviewId};
@@ -73,7 +79,7 @@ public class ReviewDao {
 	}
 
 	public void updateLastVisitedRegion(int userId, int regionId) {
-		String modifyUserNameQuery = "update User set lastVisitRegionId = ? where userId = ?";
+		String modifyUserNameQuery = "update User set lastVisitRegionId = ? where userId = ? ORDER BY created_At DESC;";
 		Object[] modifyUserNameParams = new Object[]{regionId, userId};
 		this.jdbcTemplate.update(modifyUserNameQuery, modifyUserNameParams);
 	}
