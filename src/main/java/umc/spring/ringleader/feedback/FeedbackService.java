@@ -39,11 +39,12 @@ public class FeedbackService {
 			reviewId, LIKE_COMMENT_MESSAGE
 		);
 
-		//"좋아요" 개수
+		//"정확해요" 개수
 		int exactInfoCnt = feedbackDao.getReviewFeedBackByComment(
 			reviewId, EXACT_INFO_COMMENT_MESSAGE
 		);
 
+		//"광고같아요" 개수
 		int unreliableCnt = feedbackDao.getReviewFeedBackByComment(
 			reviewId, UNRELIABLE_COMMENT_MESSAGE
 		);

@@ -110,15 +110,10 @@ public class ReviewService {
 	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps) {
 		List<ReviewRes> reviewResList = new ArrayList<>();
 		for (ReviewTmp reviewTmp : reviewTmps) {
-			ContributionWithNickNameByReviewId contributionNickname =
-				contributionService.ContributionWithNickNameByReviewId(reviewTmp.getReviewId());
-
 			List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
 
 			reviewResList.add(
 				reviewTmp.toReviewRes(
-					contributionNickname.getNickName(),
-					contributionNickname.getContribution(),
 					reviewImgs,
 					feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId())
 				)
