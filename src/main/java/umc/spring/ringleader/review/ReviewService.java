@@ -84,6 +84,8 @@ public class ReviewService {
 
 	public void updateLastVisitedRegion(int userId, int regionId) {
 		reviewDao.updateLastVisitedRegion(userId, regionId);
+		//로그인시 첫로그인인지 아닌지 구분하고 기여도 조작
+		contributionService.firstLogin(userId,regionId);
 	}
 
 	public List<ReviewRes> getReviewsByRegion(int regionId) {

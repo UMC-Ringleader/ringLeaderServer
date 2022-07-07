@@ -1,16 +1,20 @@
 package umc.spring.ringleader.contribution1;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import umc.spring.ringleader.contribution1.model.ContributionRanking;
 import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
 import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
 import umc.spring.ringleader.region.RegionService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@EnableScheduling
 public class ContributionService {
 
     private final ContributionRepository repository;
@@ -61,4 +65,20 @@ public class ContributionService {
 
     }
 
+    /*
+    매일 0시 0분 0초에 accessed 열을 전부 false 로 만드는 메소드
+     */
+    @Scheduled(cron = "0 0 0 * * *")
+    public void initializeAccessedPerDay() {
+        repository.initializeAccessedToFalse();
+    }
+
+
+    public void firstLogin(int userId,int regionId){
+        boolean accessed = repository.getAccessed(userId, regionId);
+        if (accessed == false) {
+            repository.updateAccessed(userId, regionId);
+            repository.updateContribution(userId, regionId, 1);
+        }
+    }
 }
