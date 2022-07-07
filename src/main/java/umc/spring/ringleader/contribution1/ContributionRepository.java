@@ -137,4 +137,11 @@ public class ContributionRepository {
             this.jdbcTemplate.update(initUserContribution , initUserContributionParam);
         }
     }
+
+    public void initializeAccessedToFalse() {
+        String query = "UPDATE UserRegionContribution SET accessed = ?";
+        boolean param = false;
+
+        this.jdbcTemplate.update(query, param);
+    }
 }

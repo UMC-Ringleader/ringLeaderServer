@@ -1,16 +1,20 @@
 package umc.spring.ringleader.contribution1;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import umc.spring.ringleader.contribution1.model.ContributionRanking;
 import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
 import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
 import umc.spring.ringleader.region.RegionService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@EnableScheduling
 public class ContributionService {
 
     private final ContributionRepository repository;
@@ -59,6 +63,11 @@ public class ContributionService {
     public void initializeUserRegionContribution(int userId) {
         repository.initializeUserRegionContribution(userId, regionService.getAllRegion());
 
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void initializeAccessedPerDay() {
+        repository.initializeAccessedToFalse();
     }
 
 }
