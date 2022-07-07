@@ -65,9 +65,20 @@ public class ContributionService {
 
     }
 
+    /*
+    매일 0시 0분 0초에 accessed 열을 전부 false 로 만드는 메소드
+     */
     @Scheduled(cron = "0 0 0 * * *")
     public void initializeAccessedPerDay() {
         repository.initializeAccessedToFalse();
     }
 
+
+    public void firstLogin(int userId,int regionId){
+        boolean accessed = repository.getAccessed(userId, regionId);
+        if (accessed == false) {
+            repository.updateAccessed(userId, regionId);
+            repository.updateContribution(userId, regionId, 1);
+        }
+    }
 }
