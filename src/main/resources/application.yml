@@ -7,6 +7,10 @@ spring:
 #        name:ringleader
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://springstudy.cgllngfx5zdm.ap-northeast-2.rds.amazonaws.com:3306/Ringleader
-        username: admin
-        password: dla23689!!
+        url: ENC(kf9NqZpVN2tVqU1KSX1a0g9Dv3qUF9nyMmuZvReEttfLkJaxJcosxmWqKFwvKZrdNyYCMU1VHHjsO4B0BysfT3ANxHfN9SrsMTBbA1XaApUhY9wbm2cTPrORxAlBd78C)
+        username: ENC(Mx+2Ctb2LvBpTmKimKiEOA==)
+        password: ENC(XBxvB3vT19jsMR5UY88SoAvzt/wLoeAc)
+
+jasypt:
+    encryptor:
+        bean: jasyptStringEncryptor

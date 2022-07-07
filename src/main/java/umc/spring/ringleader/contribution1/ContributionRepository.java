@@ -86,12 +86,6 @@ public class ContributionRepository {
                 , param);
     }
 
-
-    public void contributionRaiseByPostReview(int userId, int regionId){
-        String query = "UPDATE UserRegionContribution SET " +
-                "contribution WHERE userId = ? and regionId = ? ";
-    }
-
     public int getContribution(int userId, int regionId) {
         String query = "select contribution\n" +
                 "FROM UserRegionContribution\n" +
@@ -136,5 +130,30 @@ public class ContributionRepository {
 
             this.jdbcTemplate.update(initUserContribution , initUserContributionParam);
         }
+    }
+
+    //accessed 초기화
+    public void initializeAccessedToFalse() {
+        String query = "UPDATE UserRegionContribution SET accessed = ?";
+        boolean param = false;
+
+        this.jdbcTemplate.update(query, param);
+    }
+
+    //accessed가 true 인지 false 인지 반환하여 확인
+    public boolean getAccessed(int userId, int regionId) {
+        String query = "select accessed\n" +
+                "FROM UserRegionContribution\n" +
+                "WHERE userId= ? and regionId =?;";
+
+        Object[] params = new Object[]{userId, regionId};
+        return jdbcTemplate.queryForObject(query,boolean.class, params);
+    }
+
+    //accessed를 true 로 바꾸는 메소드
+    public void updateAccessed(int userId, int regionId) {
+        String query = "update UserRegionContribution set accessed = true where userId=? and regionId =?";
+        Object[] params = {userId, regionId};
+        jdbcTemplate.update(query, params);
     }
 }
