@@ -101,7 +101,8 @@ public class ReviewController {
 		@PathVariable int regionId,
 		@RequestParam(required = false) Integer loginUserId
 	) {
-		log.info("[Review][GET] : RegionId로 리뷰 조회 (최신순으로 정렬) / regionId = {}, loginUserId = {}", regionId, loginUserId);
+		log.info("[Review][GET] : RegionId로 리뷰 조회 (최신순으로 정렬) / regionId = {}", regionId);
+		log.info("[Review][GET] : 로그인 유저 / category = {}", loginUserId);
 		//로그인한 경우 최근 방문 동네 반영
 		if (loginUserId != null) {
 			reviewService.updateLastVisitedRegion(loginUserId, regionId);
@@ -116,6 +117,7 @@ public class ReviewController {
 	 * category필터 추가하여 리뷰 조회
 	 * @param category
 	 * @param regionId
+	 * @param loginUserId (Nullable, Login하지 않은 회원에 대해서)
 	 * @return
 	 */
 	@ResponseBody
@@ -126,6 +128,7 @@ public class ReviewController {
 		@RequestParam(required = false) Integer loginUserId
 	) {
 		log.info("[Review][GET] : category필터 추가하여 리뷰 조회 / category = {} ,regionId = {}", category, regionId);
+		log.info("[Review][GET] : 로그인 유저 / category = {}", loginUserId);
 
 		List<ReviewRes> reviewsByCategory = reviewService.getReviewsByCategory(category, regionId, loginUserId);
 
@@ -136,6 +139,7 @@ public class ReviewController {
 	 * 해당 User의 지역별 Review조회
 	 * @param userId
 	 * @param regionId
+	 * @param loginUserId (Nullable, Login하지 않은 회원에 대해서)
 	 * @return
 	 */
 	@ResponseBody
@@ -146,12 +150,18 @@ public class ReviewController {
 		@RequestParam(required = false) Integer loginUserId
 	) {
 		log.info("[Review][GET] : 해당 User의 지역별 Review조회 / userId = {} ,regionId = {}", userId, regionId);
+		log.info("[Review][GET] : 로그인 유저 / category = {}", loginUserId);
 
 		List<ReviewRes> usersReviewByRegion = reviewService.getUsersReviewByRegion(userId, regionId, loginUserId);
 
 		return new BaseResponse<>(usersReviewByRegion);
 	}
 
+	/**
+	 * UserId와 ReviewId를 받아 북마크 추가/삭제
+	 * @param req
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("/bookmark")
 	public BaseResponse<String> updateReviewToBookmark(@RequestBody PostReviewBookmark req) {
