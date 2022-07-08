@@ -46,4 +46,8 @@ public class RegionService {
         log.info("[RegionContribution] 00시 지역 활성도 갱신");
         regionDao.updateRegionActivity();
     }
+
+    public List<GetRegionListRes> getRegionOrderByActivity() {
+        return regionDao.getRegionOrderByActivity();
+    }
 }

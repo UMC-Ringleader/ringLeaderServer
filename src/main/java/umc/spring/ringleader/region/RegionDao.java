@@ -142,6 +142,14 @@ public class RegionDao {
         return sum;
     }
 
-
+    // 지역 활성도 기반으로 정렬반환
+    public List<GetRegionListRes> getRegionOrderByActivity() {
+        String getRegionQuery = "select * from Region order by regionActivity desc limit 3";
+        return this.jdbcTemplate.query(getRegionQuery,
+                (rs, rowNum) -> new GetRegionListRes(
+                        rs.getInt("regionId"),
+                        rs.getString("placeName"),
+                        rs.getInt("regionActivity")));
+    }
 
 }

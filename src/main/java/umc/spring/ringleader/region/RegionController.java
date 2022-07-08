@@ -49,6 +49,13 @@ public class RegionController {
         return new BaseResponse<>(getRegionRes);
     }
 
+    @GetMapping("/ranking/list")
+    public BaseResponse<List<GetRegionListRes>> getRegionListOrderByActivity() {
+        log.info("[Region][GET] : Region 활성도 랭킹");
+        List<GetRegionListRes> regionOrderByActivity = regionService.getRegionOrderByActivity();
+        return new BaseResponse<>(regionOrderByActivity);
+    }
+
 //    @GetMapping("/update")
 //    public void updateRegionActivity() {
 //        regionService.updateRegionActivity();
