@@ -44,7 +44,12 @@ public class RegionService {
     @Scheduled(cron="0 0 00 * * ?")
     public void updateRegionActivity() {
         log.info("[RegionContribution] 00시 지역 활성도 갱신");
-        regionDao.updateRegionActivity();
+        List<GetRegionListRes> allRegion = getAllRegion();
+        for (GetRegionListRes region : allRegion) {
+            regionDao.updateRegionActivityByRegionId(
+                    region.getRegionId(),
+                    regionDao.getContributionSumByRegionId(region.getRegionId()));
+        }
     }
 
     public List<GetRegionListRes> getRegionOrderByActivity() {
