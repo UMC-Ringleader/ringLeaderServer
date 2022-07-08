@@ -3,6 +3,7 @@ package umc.spring.ringleader.region;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import umc.spring.ringleader.region.dto.GetRegionListRes;
 import umc.spring.ringleader.region.dto.GetRegionRes;
@@ -36,5 +37,17 @@ public class RegionService {
 
     public List<GetRegionListRes> getAllRegion() {
         return regionDao.getAllRegion();
+    }
+
+
+//    @Scheduled(cron="10 * * * * ?") // 테스트
+    @Scheduled(cron="0 0 00 * * ?")
+    public void updateRegionActivity() {
+        log.info("[RegionContribution] 00시 지역 활성도 갱신");
+        regionDao.updateRegionActivity();
+    }
+
+    public List<GetRegionListRes> getRegionOrderByActivity() {
+        return regionDao.getRegionOrderByActivity();
     }
 }

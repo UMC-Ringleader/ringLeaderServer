@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import umc.spring.ringleader.region.dto.GetRegionListRes;
 import umc.spring.ringleader.region.dto.GetRegionRes;
+import umc.spring.ringleader.region.dto.RegionContribution;
 import umc.spring.ringleader.region.dto.UserInfoDTO;
 
 import javax.sql.DataSource;
@@ -37,6 +38,7 @@ public class RegionDao {
         return this.jdbcTemplate.queryForObject(getRegionQuery,
                 (rs, rowNum) -> new GetRegionRes(
                         rs.getInt("regionId"),
+                        rs.getInt("regionActivity"),
                         rs.getString("placeName"),
                         rs.getString("image"),
                         rs.getString("location"),
@@ -60,7 +62,8 @@ public class RegionDao {
             return this.jdbcTemplate.queryForObject(getRegionQuery,
                     (rs, rowNum) -> new GetRegionListRes(
                             rs.getInt("regionId"),
-                            rs.getString("placeName")),
+                            rs.getString("placeName"),
+                            rs.getInt("regionActivity")),
                     getRegionParams);
         }
         else { // 없으면 null
@@ -89,7 +92,8 @@ public class RegionDao {
         List<GetRegionListRes> rawList = this.jdbcTemplate.query(getRegionQuery,
                 (rs, rowNum) -> new GetRegionListRes(
                         rs.getInt("regionId"),
-                        rs.getString("placeName")));
+                        rs.getString("placeName"),
+                        rs.getInt("regionActivity")));
 
         List<GetRegionListRes> result = new ArrayList<>();
         for (GetRegionListRes getRegionListRes : rawList) {
@@ -98,14 +102,54 @@ public class RegionDao {
             }
         }
         return result;
-        }
+    }
 
+
+    // 전체 지역 조회
     public List<GetRegionListRes> getAllRegion() {
-        // 조회한 최근 방문 지역을 제외한 지역 리스트
         String getRegionQuery = "select * from Region";
         return this.jdbcTemplate.query(getRegionQuery,
                 (rs, rowNum) -> new GetRegionListRes(
                         rs.getInt("regionId"),
-                        rs.getString("placeName")));
+                        rs.getString("placeName"),
+                        rs.getInt("regionActivity")));
+    }
+
+    // 지역 활성도 업데이트
+    public void updateRegionActivity() {
+        List<GetRegionListRes> allRegion = getAllRegion();
+        for (GetRegionListRes region : allRegion) {
+            int regionId = region.getRegionId();
+            int activity = getContributionSumByRegionId(regionId);
+            this.jdbcTemplate.update("update Region set regionActivity=? where regionId=?",
+                    activity , regionId);
         }
+    }
+
+    // regionId 로 그 지역 활성도 값 return
+    public int getContributionSumByRegionId(int regionId) {
+        String getContributionQuery = "select * from UserRegionContribution where regionId = ?";
+        int getContributionParams = regionId;
+        List<RegionContribution> contributionList = this.jdbcTemplate.query(getContributionQuery,
+                (rs, rowNum) -> new RegionContribution(
+                        rs.getInt("regionId"),
+                        rs.getInt("contribution")),
+                getContributionParams);
+        int sum = 0;
+        for (RegionContribution contribution : contributionList) {
+            sum += contribution.getContribution();
+        }
+        return sum;
+    }
+
+    // 지역 활성도 기반으로 정렬반환
+    public List<GetRegionListRes> getRegionOrderByActivity() {
+        String getRegionQuery = "select * from Region order by regionActivity desc limit 3";
+        return this.jdbcTemplate.query(getRegionQuery,
+                (rs, rowNum) -> new GetRegionListRes(
+                        rs.getInt("regionId"),
+                        rs.getString("placeName"),
+                        rs.getInt("regionActivity")));
+    }
+
 }
