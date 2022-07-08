@@ -116,30 +116,17 @@ public class RegionDao {
     }
 
     // 지역 활성도 업데이트
-    public void updateRegionActivity() {
-        List<GetRegionListRes> allRegion = getAllRegion();
-        for (GetRegionListRes region : allRegion) {
-            int regionId = region.getRegionId();
-            int activity = getContributionSumByRegionId(regionId);
-            this.jdbcTemplate.update("update Region set regionActivity=? where regionId=?",
+    public void updateRegionActivityByRegionId(int regionId, int activity) {
+        this.jdbcTemplate.update("update Region set regionActivity=? where regionId=?",
                     activity , regionId);
-        }
     }
 
     // regionId 로 그 지역 활성도 값 return
     public int getContributionSumByRegionId(int regionId) {
-        String getContributionQuery = "select * from UserRegionContribution where regionId = ?";
+        String getContributionQuery = "select sum(contribution) from UserRegionContribution where regionId = ?";
         int getContributionParams = regionId;
-        List<RegionContribution> contributionList = this.jdbcTemplate.query(getContributionQuery,
-                (rs, rowNum) -> new RegionContribution(
-                        rs.getInt("regionId"),
-                        rs.getInt("contribution")),
-                getContributionParams);
-        int sum = 0;
-        for (RegionContribution contribution : contributionList) {
-            sum += contribution.getContribution();
-        }
-        return sum;
+        return this.jdbcTemplate.queryForObject(
+                getContributionQuery, new Object[]{getContributionParams}, int.class);
     }
 
     // 지역 활성도 기반으로 정렬반환
