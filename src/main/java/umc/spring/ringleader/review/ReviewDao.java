@@ -128,7 +128,7 @@ public class ReviewDao {
 			getReviewParams);
 	}
 
-	public int existingVerification(int userId, int reviewId) {
+	public int existingBookmark(int userId, int reviewId) {
 		String query = "select EXISTS(select * from UserBookmark where userId = ? and reviewId = ? limit 1) as success;\n";
 		Object[] params = {userId, reviewId};
 

@@ -24,7 +24,7 @@ public class ReviewTmp {
 	private String hashtag2;
 	private String hashtag3;
 	private String contents;
-	public ReviewRes toReviewRes(List<String> imgUrls, ReviewFeedBacks reviewFeedBacks) {
+	public ReviewRes toReviewRes(List<String> imgUrls, ReviewFeedBacks reviewFeedBacks, boolean bookmarked) {
 		return new ReviewRes(
 			userId,
 			nickName,
@@ -37,7 +37,8 @@ public class ReviewTmp {
 			hashtag3,
 			contents,
 			imgUrls,
-			reviewFeedBacks
+			reviewFeedBacks,
+			bookmarked
 		);
 	}
 }

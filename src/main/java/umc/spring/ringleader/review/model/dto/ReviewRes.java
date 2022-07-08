@@ -26,4 +26,5 @@ public class ReviewRes {
 	private String contents;
 	private List<String> imgUrls;
 	private ReviewFeedBacks reviewFeedBacks;
+	private boolean bookmarked;
 }

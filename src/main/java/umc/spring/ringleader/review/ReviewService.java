@@ -85,23 +85,23 @@ public class ReviewService {
 		contributionService.firstLogin(userId, regionId);
 	}
 
-	public List<ReviewRes> getReviewsByRegion(int regionId) {
+	public List<ReviewRes> getReviewsByRegion(int regionId, Integer loginUserId) {
 		List<ReviewTmp> reviewTmps = reviewDao.getReviewsByRegion(regionId);
-		return toReviewRes(reviewTmps);
+		return toReviewRes(reviewTmps, loginUserId);
 	}
 
-	public List<ReviewRes> getReviewsByCategory(String category, int regionId) {
+	public List<ReviewRes> getReviewsByCategory(String category, int regionId, Integer loginUserId) {
 		List<ReviewTmp> reviewsByCategory = reviewDao.getReviewsByCategory(category, regionId);
-		return toReviewRes(reviewsByCategory);
+		return toReviewRes(reviewsByCategory, loginUserId);
 	}
 
-	public List<ReviewRes> getUsersReviewByRegion(int userId, int regionId) {
+	public List<ReviewRes> getUsersReviewByRegion(int userId, int regionId, Integer loginUserId) {
 		List<ReviewTmp> userReviewsByRegion = reviewDao.getUserReviewsByRegionId(userId, regionId);
-		return toReviewRes(userReviewsByRegion);
+		return toReviewRes(userReviewsByRegion, loginUserId);
 	}
 
 	public String updateReviewToBookmark(PostReviewBookmark req) {
-		int checkingCode = reviewDao.existingVerification(req.getUserId(), req.getReviewId());
+		int checkingCode = reviewDao.existingBookmark(req.getUserId(), req.getReviewId());
 
 		if (checkingCode == NULL_DATA_CODE) {
 			//북마크 한 적 없는 리뷰인 경우 -> 추가
@@ -120,18 +120,41 @@ public class ReviewService {
 		ReviewRes로는 ReviewTmp에서
 		리뷰 작성자의 닉네임, 지역 기여도, reviewImage가 추가됨 + 피드백 정보
 	*/
-	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps) {
+	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps, Integer loginUserId) {
 		List<ReviewRes> reviewResList = new ArrayList<>();
-		for (ReviewTmp reviewTmp : reviewTmps) {
-			List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
 
-			reviewResList.add(
-				reviewTmp.toReviewRes(
-					reviewImgs,
-					feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId())
-				)
-			);
+		//로그인 하지 않은 사용자인 경우
+		//북마크 정보는 모두 False
+		if (loginUserId == null) {
+			for (ReviewTmp reviewTmp : reviewTmps) {
+				List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
+				reviewResList.add(
+					reviewTmp.toReviewRes(
+						reviewImgs,
+						feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId()),
+						false
+					)
+				);
+			}
 		}
+		//로그인 한 회원인 경우
+		//북마크 정보를 반영해서 반환.
+		else {
+			for (ReviewTmp reviewTmp : reviewTmps) {
+				List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
+
+				boolean isBookmarked =
+					reviewDao.existingBookmark(loginUserId, reviewTmp.getReviewId()) == 1; //1인경우 북마크된 리뷰
+				reviewResList.add(
+					reviewTmp.toReviewRes(
+						reviewImgs,
+						feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId()),
+						isBookmarked
+					)
+				);
+			}
+		}
+
 		return reviewResList;
 	}
 }

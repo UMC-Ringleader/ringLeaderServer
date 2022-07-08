@@ -97,14 +97,17 @@ public class ReviewController {
 	 */
 	@ResponseBody
 	@GetMapping("/{regionId}")
-	public BaseResponse<List<ReviewRes>> getRegionReviewsLately(@PathVariable int regionId, @RequestParam String loginUserId) {
+	public BaseResponse<List<ReviewRes>> getRegionReviewsLately(
+		@PathVariable int regionId,
+		@RequestParam(required = false) Integer loginUserId
+	) {
 		log.info("[Review][GET] : RegionId로 리뷰 조회 (최신순으로 정렬) / regionId = {}, loginUserId = {}", regionId, loginUserId);
 		//로그인한 경우 최근 방문 동네 반영
 		if (loginUserId != null) {
-			reviewService.updateLastVisitedRegion(Integer.parseInt(loginUserId), regionId);
+			reviewService.updateLastVisitedRegion(loginUserId, regionId);
 		}
 
-		List<ReviewRes> reviewsByRegion = reviewService.getReviewsByRegion(regionId);
+		List<ReviewRes> reviewsByRegion = reviewService.getReviewsByRegion(regionId, loginUserId);
 
 		return new BaseResponse<>(reviewsByRegion);
 	}
@@ -117,11 +120,14 @@ public class ReviewController {
 	 */
 	@ResponseBody
 	@GetMapping("/{regionId}/category")
-	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@RequestParam String category,
-		@PathVariable String regionId) {
+	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(
+		@RequestParam String category,
+		@PathVariable Integer regionId,
+		@RequestParam(required = false) Integer loginUserId
+	) {
 		log.info("[Review][GET] : category필터 추가하여 리뷰 조회 / category = {} ,regionId = {}", category, regionId);
 
-		List<ReviewRes> reviewsByCategory = reviewService.getReviewsByCategory(category, Integer.parseInt(regionId));
+		List<ReviewRes> reviewsByCategory = reviewService.getReviewsByCategory(category, regionId, loginUserId);
 
 		return new BaseResponse<>(reviewsByCategory);
 	}
@@ -134,10 +140,14 @@ public class ReviewController {
 	 */
 	@ResponseBody
 	@GetMapping("/profile/{userId}")
-	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(@PathVariable int userId, @RequestParam String regionId) {
+	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(
+		@PathVariable int userId,
+		@RequestParam Integer regionId,
+		@RequestParam(required = false) Integer loginUserId
+	) {
 		log.info("[Review][GET] : 해당 User의 지역별 Review조회 / userId = {} ,regionId = {}", userId, regionId);
 
-		List<ReviewRes> usersReviewByRegion = reviewService.getUsersReviewByRegion(userId, Integer.parseInt(regionId));
+		List<ReviewRes> usersReviewByRegion = reviewService.getUsersReviewByRegion(userId, regionId, loginUserId);
 
 		return new BaseResponse<>(usersReviewByRegion);
 	}
