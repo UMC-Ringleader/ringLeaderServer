@@ -1,4 +1,4 @@
-package umc.spring.ringleader.search;
+package umc.spring.ringleader.search.model;
 
 import lombok.*;
 

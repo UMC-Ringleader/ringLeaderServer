@@ -1,37 +1,33 @@
 package umc.spring.ringleader.search;
 
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import umc.spring.ringleader.config.BaseResponse;
+import umc.spring.ringleader.search.model.PostSearchResultReq;
+import umc.spring.ringleader.search.model.SearchResponseDto;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 
 @Service
 @Slf4j
 public class SearchApiService {
 
-    public SearchApiService(RestTemplate restTemplate) {
+    private final RestTemplate restTemplate;
+    private final SearchApiRepository searchApiRepository;
+
+    public SearchApiService(RestTemplate restTemplate, SearchApiRepository searchApiRepository) {
         this.restTemplate = restTemplate;
+        this.searchApiRepository = searchApiRepository;
     }
 
-    private final RestTemplate restTemplate;
     private final String CLIENT_ID = "FKlT_BMkmAEiurtLSm2x";
     private final String CLIENT_SECRET = "Yo6xo7jkDT";
-
-
 
     public BaseResponse<SearchResponseDto> searchLocal(String keyword) {
 
@@ -58,4 +54,9 @@ public class SearchApiService {
         return new BaseResponse<>(result.getBody());
     }
 
+    public String createSearchedResult(PostSearchResultReq postSearchResultReq){
+        searchApiRepository.updateSearchedResult(postSearchResultReq.getReviewId(),postSearchResultReq.getRegionId(), postSearchResultReq.getTitle(), postSearchResultReq.getCategory(),
+                postSearchResultReq.getAddress(), postSearchResultReq.getRoadAddress(), postSearchResultReq.getMapx(), postSearchResultReq.getMapy());
+        return "선택결과가 저장되었습니다.";
+    }
 }
