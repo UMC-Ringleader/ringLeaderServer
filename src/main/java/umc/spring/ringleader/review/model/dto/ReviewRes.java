@@ -14,8 +14,10 @@ import umc.spring.ringleader.feedback.model.dto.ReviewFeedBacks;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewRes {
-	String userName;
-	int userContribution;
+	private int userId;
+	private String nickName;
+	private int userContribution;
+	private int reviewId;
 	private String title;
 	private String category;
 	private String hashtag1;
@@ -24,4 +26,5 @@ public class ReviewRes {
 	private String contents;
 	private List<String> imgUrls;
 	private ReviewFeedBacks reviewFeedBacks;
+	private boolean bookmarked;
 }

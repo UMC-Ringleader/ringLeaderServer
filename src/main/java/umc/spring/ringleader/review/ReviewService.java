@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import umc.spring.ringleader.contribution1.ContributionService;
-import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
 import umc.spring.ringleader.feedback.FeedbackService;
 import umc.spring.ringleader.review.model.dto.*;
 
@@ -21,7 +20,8 @@ public class ReviewService {
 	private final FeedbackService feedbackService;
 
 	@Autowired
-	public ReviewService(ReviewDao reviewDao, ContributionService contributionService, FeedbackService feedbackService) {
+	public ReviewService(ReviewDao reviewDao, ContributionService contributionService,
+		FeedbackService feedbackService) {
 		this.reviewDao = reviewDao;
 		this.contributionService = contributionService;
 		this.feedbackService = feedbackService;
@@ -31,15 +31,13 @@ public class ReviewService {
 		int savedId = reviewDao.saveReview(req);
 
 		//Image가 없는 경우 기여도 + 5
-		if (req.getPostImages()==null) {
+		if (req.getPostImages() == null) {
 			contributionService.contributionUpdate(
 				req.getUserId(),
 				req.getRegionId(),
 				POST_NOT_IMG_REVIEW
 			);
-		}
-
-		else{
+		} else {
 			//Image가 있는 경우 기여도 +10
 			//ReviewImage Table에 저장
 			contributionService.contributionUpdate(
@@ -53,7 +51,6 @@ public class ReviewService {
 			}
 		}
 		return new PostReviewRes(savedId, req.getTitle());
-
 
 	}
 
@@ -85,22 +82,36 @@ public class ReviewService {
 	public void updateLastVisitedRegion(int userId, int regionId) {
 		reviewDao.updateLastVisitedRegion(userId, regionId);
 		//로그인시 첫로그인인지 아닌지 구분하고 기여도 조작
-		contributionService.firstLogin(userId,regionId);
+		contributionService.firstLogin(userId, regionId);
 	}
 
-	public List<ReviewRes> getReviewsByRegion(int regionId) {
+	public List<ReviewRes> getReviewsByRegion(int regionId, Integer loginUserId) {
 		List<ReviewTmp> reviewTmps = reviewDao.getReviewsByRegion(regionId);
-		return toReviewRes(reviewTmps);
+		return toReviewRes(reviewTmps, loginUserId);
 	}
 
-	public List<ReviewRes> getReviewsByCategory(String category, int regionId) {
+	public List<ReviewRes> getReviewsByCategory(String category, int regionId, Integer loginUserId) {
 		List<ReviewTmp> reviewsByCategory = reviewDao.getReviewsByCategory(category, regionId);
-		return toReviewRes(reviewsByCategory);
+		return toReviewRes(reviewsByCategory, loginUserId);
 	}
 
-	public List<ReviewRes> getUsersReviewByRegion(int userId, int regionId) {
+	public List<ReviewRes> getUsersReviewByRegion(int userId, int regionId, Integer loginUserId) {
 		List<ReviewTmp> userReviewsByRegion = reviewDao.getUserReviewsByRegionId(userId, regionId);
-		return toReviewRes(userReviewsByRegion);
+		return toReviewRes(userReviewsByRegion, loginUserId);
+	}
+
+	public String updateReviewToBookmark(PostReviewBookmark req) {
+		int checkingCode = reviewDao.existingBookmark(req.getUserId(), req.getReviewId());
+
+		if (checkingCode == NULL_DATA_CODE) {
+			//북마크 한 적 없는 리뷰인 경우 -> 추가
+			reviewDao.createReviewBookmark(req.getUserId(), req.getReviewId());
+			return BOOKMARK_ADD_MESSAGE;
+		} else {
+			//북마크가 이미 되어 있는 경우 -> 제거
+			reviewDao.deleteReviewBookmark(req.getUserId(), req.getReviewId());
+			return BOOKMARK_DELETE_MESSAGE;
+		}
 	}
 
 	/*
@@ -109,23 +120,41 @@ public class ReviewService {
 		ReviewRes로는 ReviewTmp에서
 		리뷰 작성자의 닉네임, 지역 기여도, reviewImage가 추가됨 + 피드백 정보
 	*/
-	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps) {
+	private List<ReviewRes> toReviewRes(List<ReviewTmp> reviewTmps, Integer loginUserId) {
 		List<ReviewRes> reviewResList = new ArrayList<>();
-		for (ReviewTmp reviewTmp : reviewTmps) {
-			ContributionWithNickNameByReviewId contributionNickname =
-				contributionService.ContributionWithNickNameByReviewId(reviewTmp.getReviewId());
 
-			List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
-
-			reviewResList.add(
-				reviewTmp.toReviewRes(
-					contributionNickname.getNickName(),
-					contributionNickname.getContribution(),
-					reviewImgs,
-					feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId())
-				)
-			);
+		//로그인 하지 않은 사용자인 경우
+		//북마크 정보는 모두 False
+		if (loginUserId == null) {
+			for (ReviewTmp reviewTmp : reviewTmps) {
+				List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
+				reviewResList.add(
+					reviewTmp.toReviewRes(
+						reviewImgs,
+						feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId()),
+						false
+					)
+				);
+			}
 		}
+		//로그인 한 회원인 경우
+		//북마크 정보를 반영해서 반환.
+		else {
+			for (ReviewTmp reviewTmp : reviewTmps) {
+				List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
+
+				boolean isBookmarked =
+					reviewDao.existingBookmark(loginUserId, reviewTmp.getReviewId()) == 1; //1인경우 북마크된 리뷰
+				reviewResList.add(
+					reviewTmp.toReviewRes(
+						reviewImgs,
+						feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId()),
+						isBookmarked
+					)
+				);
+			}
+		}
+
 		return reviewResList;
 	}
 }
