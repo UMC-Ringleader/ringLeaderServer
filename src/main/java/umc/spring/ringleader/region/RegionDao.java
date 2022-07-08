@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import umc.spring.ringleader.region.dto.GetRegionListRes;
 import umc.spring.ringleader.region.dto.GetRegionRes;
+import umc.spring.ringleader.region.dto.RegionContribution;
 import umc.spring.ringleader.region.dto.UserInfoDTO;
 
 import javax.sql.DataSource;
@@ -101,11 +102,38 @@ public class RegionDao {
         }
 
     public List<GetRegionListRes> getAllRegion() {
-        // 조회한 최근 방문 지역을 제외한 지역 리스트
         String getRegionQuery = "select * from Region";
         return this.jdbcTemplate.query(getRegionQuery,
                 (rs, rowNum) -> new GetRegionListRes(
                         rs.getInt("regionId"),
                         rs.getString("placeName")));
+    }
+
+    public void updateRegionActivity() {
+        List<GetRegionListRes> allRegion = getAllRegion();
+        for (GetRegionListRes region : allRegion) {
+            int regionId = region.getRegionId();
+            int activity = getContributionSumByRegionId(regionId);
+            this.jdbcTemplate.update("update Region set regionActivity=? where regionId=?",
+                    activity , regionId);
         }
+    }
+
+    public int getContributionSumByRegionId(int regionId) {
+        String getContributionQuery = "select * from UserRegionContribution where regionId = ?";
+        int getContributionParams = regionId;
+        List<RegionContribution> contributionList = this.jdbcTemplate.query(getContributionQuery,
+                (rs, rowNum) -> new RegionContribution(
+                        rs.getInt("regionId"),
+                        rs.getInt("contribution")),
+                getContributionParams);
+        int sum = 0;
+        for (RegionContribution contribution : contributionList) {
+            sum += contribution.getContribution();
+        }
+        return sum;
+    }
+
+
+
 }

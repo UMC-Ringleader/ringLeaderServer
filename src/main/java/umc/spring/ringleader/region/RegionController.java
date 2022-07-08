@@ -49,6 +49,10 @@ public class RegionController {
         return new BaseResponse<>(getRegionRes);
     }
 
+//    @GetMapping("/update")
+//    public void updateRegionActivity() {
+//        regionService.updateRegionActivity();
+//    }
 
 
 }
