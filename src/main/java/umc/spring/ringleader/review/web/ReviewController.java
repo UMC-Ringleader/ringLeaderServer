@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.config.BaseResponse;
-import umc.spring.ringleader.config.BaseResponseStatus;
 import umc.spring.ringleader.review.ReviewService;
+import umc.spring.ringleader.review.model.dto.PostReviewBookmark;
 import umc.spring.ringleader.review.model.dto.PostReviewReq;
 import umc.spring.ringleader.review.model.dto.PostReviewRes;
 import umc.spring.ringleader.review.model.dto.ReviewRes;
@@ -140,6 +140,18 @@ public class ReviewController {
 		List<ReviewRes> usersReviewByRegion = reviewService.getUsersReviewByRegion(userId, Integer.parseInt(regionId));
 
 		return new BaseResponse<>(usersReviewByRegion);
+	}
+
+	@ResponseBody
+	@PostMapping("/bookmark")
+	public BaseResponse<String> updateReviewToBookmark(@RequestBody PostReviewBookmark req) {
+		log.info(
+			"[Review][POST] : 해당 User가 해당 Review에 북마크 버튼 클릭 / userId = {}, reviewId = {}",
+			req.getUserId(), req.getReviewId()
+		);
+
+		String updateResultMessage = reviewService.updateReviewToBookmark(req);
+		return new BaseResponse<>(updateResultMessage);
 	}
 
 

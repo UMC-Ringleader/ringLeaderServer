@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import umc.spring.ringleader.region.dto.UserInfoDTO;
 import umc.spring.ringleader.review.model.dto.*;
 
 @Repository
@@ -128,6 +127,25 @@ public class ReviewDao {
 				rs.getInt("regionId")),
 			getReviewParams);
 	}
+
+	public int existingVerification(int userId, int reviewId) {
+		String query = "select EXISTS(select * from UserBookmark where userId = ? and reviewId = ? limit 1) as success;\n";
+		Object[] params = {userId, reviewId};
+
+		return jdbcTemplate.queryForObject(query, int.class,params);
+	}
+
+	public int createReviewBookmark(int userId, int reviewId) {
+		String query = "INSERT INTO UserBookmark(userId,reviewId) VALUES(?,?)";
+		Object[] params = {userId, reviewId};
+
+		return jdbcTemplate.update(query, params);
+	}
+
+	public int deleteReviewBookmark(int userId, int reviewId) {
+		return jdbcTemplate.update("delete from UserBookmark where userId= ? and reviewId =? ", userId, reviewId);
+	}
+
 
 	//자주 사용되는 익명 클래스 (new ReviewTmp (rs, rowNum) -> rs.getInt("userId"), ...) 추출하여 재사용
 	private static class ReviewTmpMapper implements RowMapper<ReviewTmp> {

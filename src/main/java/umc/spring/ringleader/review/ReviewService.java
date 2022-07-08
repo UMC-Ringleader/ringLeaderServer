@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import umc.spring.ringleader.contribution1.ContributionService;
-import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
 import umc.spring.ringleader.feedback.FeedbackService;
 import umc.spring.ringleader.review.model.dto.*;
 
@@ -21,7 +20,8 @@ public class ReviewService {
 	private final FeedbackService feedbackService;
 
 	@Autowired
-	public ReviewService(ReviewDao reviewDao, ContributionService contributionService, FeedbackService feedbackService) {
+	public ReviewService(ReviewDao reviewDao, ContributionService contributionService,
+		FeedbackService feedbackService) {
 		this.reviewDao = reviewDao;
 		this.contributionService = contributionService;
 		this.feedbackService = feedbackService;
@@ -31,15 +31,13 @@ public class ReviewService {
 		int savedId = reviewDao.saveReview(req);
 
 		//Image가 없는 경우 기여도 + 5
-		if (req.getPostImages()==null) {
+		if (req.getPostImages() == null) {
 			contributionService.contributionUpdate(
 				req.getUserId(),
 				req.getRegionId(),
 				POST_NOT_IMG_REVIEW
 			);
-		}
-
-		else{
+		} else {
 			//Image가 있는 경우 기여도 +10
 			//ReviewImage Table에 저장
 			contributionService.contributionUpdate(
@@ -53,7 +51,6 @@ public class ReviewService {
 			}
 		}
 		return new PostReviewRes(savedId, req.getTitle());
-
 
 	}
 
@@ -85,7 +82,7 @@ public class ReviewService {
 	public void updateLastVisitedRegion(int userId, int regionId) {
 		reviewDao.updateLastVisitedRegion(userId, regionId);
 		//로그인시 첫로그인인지 아닌지 구분하고 기여도 조작
-		contributionService.firstLogin(userId,regionId);
+		contributionService.firstLogin(userId, regionId);
 	}
 
 	public List<ReviewRes> getReviewsByRegion(int regionId) {
@@ -101,6 +98,20 @@ public class ReviewService {
 	public List<ReviewRes> getUsersReviewByRegion(int userId, int regionId) {
 		List<ReviewTmp> userReviewsByRegion = reviewDao.getUserReviewsByRegionId(userId, regionId);
 		return toReviewRes(userReviewsByRegion);
+	}
+
+	public String updateReviewToBookmark(PostReviewBookmark req) {
+		int checkingCode = reviewDao.existingVerification(req.getUserId(), req.getReviewId());
+
+		if (checkingCode == NULL_DATA_CODE) {
+			//북마크 한 적 없는 리뷰인 경우 -> 추가
+			reviewDao.createReviewBookmark(req.getUserId(), req.getReviewId());
+			return BOOKMARK_ADD_MESSAGE;
+		} else {
+			//북마크가 이미 되어 있는 경우 -> 제거
+			reviewDao.deleteReviewBookmark(req.getUserId(), req.getReviewId());
+			return BOOKMARK_DELETE_MESSAGE;
+		}
 	}
 
 	/*

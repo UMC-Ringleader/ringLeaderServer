@@ -30,6 +30,11 @@ public class Constant {
 	public static final String FEEDBACK_ADDED_MESSAGE = "피드백이 추가되었습니다.";
 	public static final String FEEDBACK_REMOVED_MESSAGE = "피드백이 삭제되었습니다.";
 	public static final String FEEDBACK_CHANGED_MESSAGE = "피드백이 변경되었습니다.";
+	
+	//Bookmark Result Message
+	public static final String BOOKMARK_ADD_MESSAGE = "북마크가 추가 되었습니다.";
+	public static final String BOOKMARK_DELETE_MESSAGE = "북마크가 제거 되었습니다.";
+	
 
 
 }
