@@ -9,4 +9,5 @@ import lombok.*;
 public class GetRegionListRes {
     private int regionId;
     private String placeName;
+    private int regionActivity;
 }

@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GetRegionRes {
     private int regionId;
+    private int regionActivity;
     private String placeName;
     private String image;
     private String location;
