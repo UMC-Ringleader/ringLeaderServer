@@ -14,6 +14,8 @@ public class Constant {
 	public static final int ADD_FEEDBACK = 1;
 	public static final int DELETE_FEEDBACK = -1;
 
+	public static final int DAILY_FIRST_LOGIN_COMPENSATION = 1;
+
 
 
 

@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static umc.spring.ringleader.config.Constant.DAILY_FIRST_LOGIN_COMPENSATION;
+
 @Service
 @EnableScheduling
 public class ContributionService {
@@ -78,7 +80,7 @@ public class ContributionService {
         boolean accessed = repository.getAccessed(userId, regionId);
         if (accessed == false) {
             repository.updateAccessed(userId, regionId);
-            repository.updateContribution(userId, regionId, 1);
+            repository.updateContribution(userId, regionId, DAILY_FIRST_LOGIN_COMPENSATION);
         }
     }
 }
