@@ -58,7 +58,7 @@ public class LoginController {
      * 2. 비밀번호, 비밀번호 확인 대조
      */
     @ResponseBody
-    @PostMapping
+    @PostMapping("/")
     public BaseResponse<PostSignupRes> signup(@RequestBody PostSignupReq postSignupReq) {
         log.info("[Login][POST] : 회원가입 API / email = {}", postSignupReq.getEmail());
         PostSignupRes postSignupRes = loginService.retrieveEmail(postSignupReq);
@@ -77,11 +77,19 @@ public class LoginController {
          */
     }
 
+    /**
+     * 회원가입 - 닉네임 중복 검사 API
+     */
+    @ResponseBody
+    @PostMapping("/signup/{nickname}")
+    public BaseResponse<String> retrieveNickname(@RequestBody PostSignupReq postSignupReq) {
+        return new BaseResponse<>(loginService.retrieveNickname(postSignupReq.getNickname()));
+    }
+
+
     @ResponseBody
     @PatchMapping("{userId}")
-    public BaseResponse<String> addUserDetail(
-        @RequestBody PostUserDetailReq req, @PathVariable int userId
-    ) {
+    public BaseResponse<String> addUserDetail(@RequestBody PostUserDetailReq req, @PathVariable int userId) {
         return new BaseResponse<>(loginService.saveUserDetail(userId, req));
     }
 }

@@ -28,7 +28,7 @@ public class LoginService {
 
 
     /**
-     * 이메일 통해 비밀번호 조회
+     * 이메일 통해 비밀번호 조회 / 로그인
      */
     public PostLoginRes retrievePwdByEmail(PostLoginReq postLoginReq){
         // 입력 받은 이메일과 대응하는 패스워드 조회
@@ -45,17 +45,17 @@ public class LoginService {
     }
 
     /**
-     * 이메일 중복 검사 -> 비밀번호 검사
+     * 이메일 중복 검사 -> 비밀번호 검사 / 회원가입
      */
     public PostSignupRes retrieveEmail(PostSignupReq postSignupReq){
         // 비밀번호와 비밀번호 확인이 동일한 경우
         if(postSignupReq.getPwd().equals(postSignupReq.getRe_pwd()))
         {
-            // 이메일 중복되는 경우
-            if(loginDao.isCorrespondEmail(postSignupReq.getEmail())) {
+            // 이메일이 중복되는 경우
+            if(loginDao.correspondEmail(postSignupReq.getEmail())) {
                 return null;
             }
-            // 이메일 중복되지 않는 경우
+            // 이메일이 중복되지 않는 경우
             else{
                 return new PostSignupRes(loginDao.saveUser(postSignupReq));
             }
@@ -65,6 +65,21 @@ public class LoginService {
             return null;
         }
     }
+
+    /**
+     * 닉네임 중복 검사 / 회원가입
+     */
+    public String retrieveNickname(String nickname){
+        // 닉네임이 중복되는 경우
+            if(loginDao.correspondNickname(nickname)) {
+                return "중복되는 닉네임입니다!";
+            }
+            // 닉네임이 중복되지 않는 경우
+            else{
+                return "사용 가능한 닉네임입니다!";
+            }
+        }
+
 
     public String saveUserDetail(int userId, PostUserDetailReq req) {
         int updateCode = loginDao.saveUserDetail(userId, req);
