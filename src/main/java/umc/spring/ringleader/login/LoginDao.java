@@ -18,7 +18,7 @@ public class LoginDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
     /**
-     * 이메일로 비밀번호 조회
+     * 이메일로 비밀번호 조회 / 로그인
      *
      * @param email
      * @return
@@ -34,7 +34,7 @@ public class LoginDao {
     }
 
     /**
-     * 비밀번호 일치하는지 조회
+     * 비밀번호 일치하는지 조회 / 로그인
      *
      * @param password
      * @return
@@ -53,14 +53,27 @@ public class LoginDao {
     }
 
     /**
-     * 이메일 중복 검사
+     * 이메일 중복 검사 / 회원가입
      * @param email
      * @return
 */
-    public boolean isCorrespondEmail(String email) {
-        // 있으면 1, 없으면 0
+    public boolean correspondEmail(String email) {
+        // 중복되는 이메일이 존재하면 1, 없다면 0
         String getEmailOverlapQuery = "select exists(select userId from User where email = ?)";
         Integer flag = this.jdbcTemplate.queryForObject(getEmailOverlapQuery, Integer.class, email);
+        return flag == 1;
+    }
+
+    /**
+     * 닉네임 중복 검사 / 회원가입
+     * @param nickname
+     * @return
+     */
+    public boolean correspondNickname(String nickname) {
+        // 중복되는 닉네임이 존재하면 1, 없다면 0
+        String getNicknameOverlapQuery = "select exists(select userId from User where nickname = ?)";
+        Integer flag = this.jdbcTemplate.queryForObject(getNicknameOverlapQuery, Integer.class, nickname);
+
         return flag == 1;
     }
 
@@ -80,13 +93,13 @@ public class LoginDao {
 
     public int saveUserDetail(int userId, PostUserDetailReq req) {
         String modifyUserDetailQuery = "update User set "
-            + "nickName =?,"
-            + "image =?"
-            + "where userId =?"; // 해당 userId를 만족하는 User의 닉네임과 이미지주소 추가
+                + "nickName =?,"
+                + "image =?"
+                + "where userId =?"; // 해당 userId를 만족하는 User의 닉네임과 이미지주소 추가
         Object[] modifyUserDetailParams = new Object[]{
-            req.getNickname(),
-            req.getImgUrl(),
-            userId
+                req.getNickname(),
+                req.getImgUrl(),
+                userId
         };
 
         return this.jdbcTemplate.update(modifyUserDetailQuery, modifyUserDetailParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
