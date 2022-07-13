@@ -19,7 +19,8 @@ public class Constant {
 
 
 
-
+	//신고내용 표출시 최소 Feedback 과 Report 비율 (REPORT/FEEDBACK)
+	public static final double RATIO_REPORT_BY_FEEDBACK = 0.3; //30퍼센트
 
 
 	//Feedback comment 키워드
@@ -27,8 +28,14 @@ public class Constant {
 	public static final String EXACT_INFO_COMMENT_MESSAGE = "정확한 정보예요";
 	public static final String SYMPATHY_COMMENT_MESSAGE = "공감돼요";
 	public static final String HELPFUL_COMMENT_MESSAGE = "도움이 되었어요";
-	public static final String UNRELIABLE_COMMENT_MESSAGE = "광고같아요";
-	public static final String UNLIKE_COMMENT_MESSAGE = "싫어요";
+	//Report comment 키워드
+	public static final String UNRELIABLE_COMMENT_MESSAGE = "부정확한 정보에요";
+	public static final String SUSPICIOUS_ADVERTISING_MESSAGE = "광고가 의심돼요";
+	public static final String IMPROPER_MESSAGE = "부정확한 정보에요";
+	public static final String EXCESSIVE_PUBLICITY_MESSAGE = "지나친 홍보에요";
+	public static final String INSINCERE_WRITING_MESSAGE = "성의없는 게시물이에요";
+	public static final String DUPLICATE_REVIEWS_MESSAGE = "중복 게시물이에요";
+	public static final String INACCURATE_ADDRESS_MESSAGE = "주소가 잘못됐어요";
 
 	//Feedback Result Message
 	public static final String FEEDBACK_ADDED_MESSAGE = "피드백이 추가되었습니다.";
