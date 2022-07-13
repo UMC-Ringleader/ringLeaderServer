@@ -63,7 +63,7 @@ public class ReviewService {
 			contributionService.contributionUpdate(
 				tempReview.getUserId(),
 				tempReview.getRegionId(),
-				DELETE_NOT_IMG_REVIEW);
+				DELETE_IMG_REVIEW);
 			reviewDao.deleteReviewImages(deleteId);
 		}
 		// 이미지 없으면 (-5)
