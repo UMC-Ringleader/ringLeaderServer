@@ -24,7 +24,9 @@ public class Constant {
 
 	//Feedback comment 키워드
 	public static final String LIKE_COMMENT_MESSAGE = "좋아요";
-	public static final String EXACT_INFO_COMMENT_MESSAGE = "정확한 정보에요";
+	public static final String EXACT_INFO_COMMENT_MESSAGE = "정확한 정보예요";
+	public static final String SYMPATHY_COMMENT_MESSAGE = "공감돼요";
+	public static final String HELPFUL_COMMENT_MESSAGE = "도움이 되었어요";
 	public static final String UNRELIABLE_COMMENT_MESSAGE = "광고같아요";
 	public static final String UNLIKE_COMMENT_MESSAGE = "싫어요";
 

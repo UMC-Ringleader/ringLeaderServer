@@ -39,20 +39,25 @@ public class FeedbackService {
 			reviewId, LIKE_COMMENT_MESSAGE
 		);
 
-		//"정확해요" 개수
+		//"정확한 정보예요" 개수
 		int exactInfoCnt = feedbackDao.getReviewFeedBackByComment(
 			reviewId, EXACT_INFO_COMMENT_MESSAGE
 		);
 
-		//"광고같아요" 개수
-		int unreliableCnt = feedbackDao.getReviewFeedBackByComment(
-			reviewId, UNRELIABLE_COMMENT_MESSAGE
+		//"공감돼요" 개수
+		int sympathyCnt = feedbackDao.getReviewFeedBackByComment(
+			reviewId, SYMPATHY_COMMENT_MESSAGE
 		);
 
-		return new ReviewFeedBacks(likeCnt, exactInfoCnt, unreliableCnt);
+		//"도움이 되었어요" 개수
+		int helpfulCnt = feedbackDao.getReviewFeedBackByComment(
+			reviewId, HELPFUL_COMMENT_MESSAGE
+		);
+
+		return new ReviewFeedBacks(likeCnt, exactInfoCnt, sympathyCnt, helpfulCnt);
 	}
 
-	public String createOrDeleteReviewFeedback(int userId, int reviewId,String comment) {
+	public String createOrDeleteReviewFeedback(int userId, int reviewId, String comment) {
 		int regionId = feedbackDao.getRegionIdByReviewId(reviewId);
 		int checking = feedbackDao.existingVerification(userId, reviewId);
 
