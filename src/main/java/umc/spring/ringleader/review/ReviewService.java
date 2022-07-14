@@ -2,29 +2,38 @@ package umc.spring.ringleader.review;
 
 import static umc.spring.ringleader.config.Constant.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import umc.spring.ringleader.contribution1.ContributionService;
 import umc.spring.ringleader.feedback.FeedbackService;
+import umc.spring.ringleader.report.ReportRepository;
+import umc.spring.ringleader.report.model.CheckingNonconformity;
 import umc.spring.ringleader.review.model.dto.*;
 
+@Slf4j
 @Service
 public class ReviewService {
 
 	private final ReviewDao reviewDao;
 	private final ContributionService contributionService;
 	private final FeedbackService feedbackService;
+	private final ReportRepository reportRepository;
 
 	@Autowired
 	public ReviewService(ReviewDao reviewDao, ContributionService contributionService,
-		FeedbackService feedbackService) {
+						 FeedbackService feedbackService, ReportRepository reportRepository) {
 		this.reviewDao = reviewDao;
 		this.contributionService = contributionService;
 		this.feedbackService = feedbackService;
+		this.reportRepository = reportRepository;
 	}
 
 	public PostReviewRes saveReview(PostReviewReq req) {
@@ -33,17 +42,17 @@ public class ReviewService {
 		//Image가 없는 경우 기여도 + 5
 		if (req.getPostImages() == null) {
 			contributionService.contributionUpdate(
-				req.getUserId(),
-				req.getRegionId(),
-				POST_NOT_IMG_REVIEW
+					req.getUserId(),
+					req.getRegionId(),
+					POST_NOT_IMG_REVIEW
 			);
 		} else {
 			//Image가 있는 경우 기여도 +10
 			//ReviewImage Table에 저장
 			contributionService.contributionUpdate(
-				req.getUserId(),
-				req.getRegionId(),
-				POST_IMG_REVIEW
+					req.getUserId(),
+					req.getRegionId(),
+					POST_IMG_REVIEW
 			);
 
 			for (PostImage p : req.getPostImages()) {
@@ -52,6 +61,37 @@ public class ReviewService {
 		}
 		return new PostReviewRes(savedId, req.getTitle());
 
+	}
+
+	// 매일 00시에 4일전 리뷰에 대한 인센티브 여부 확인 및 점수 부여
+	@Scheduled(cron = "0 0 0 * * *")
+	public void checkIncentive(){
+		// 4일 이전 리뷰
+		log.info("인센티브 메서드 실행");
+		List<ReviewIncentiveTemp> reviewListToCheckIncentive = getReviewListToCheckIncentive();
+		for (ReviewIncentiveTemp reviewTemp : reviewListToCheckIncentive) {
+			if (isValidIncentive(reviewTemp.getReviewId())) { // 피드백 10+ && 80퍼 이상
+				contributionService.contributionUpdate(
+						reviewTemp.getUserId(),
+						reviewTemp.getRegionId(),
+						INCENTIVE
+				);
+			}
+		}
+	}
+
+
+	// 인센티브 부여 조건 충족 판단 메서드
+	private boolean isValidIncentive(int reviewId){
+		CheckingNonconformity reportedAndFeedbackCount = reportRepository.getReportedAndFeedbackCount(reviewId);
+		int sum = reportedAndFeedbackCount.getFeedbackCount() + reportedAndFeedbackCount.getReportedCount();
+		double rate = reportedAndFeedbackCount.getFeedbackCount()/sum;
+		if (sum >= INCENTIVE_VALID_FEEDBACK_COUNT && rate >= INCENTIVE_VALID_FEEDBACK_RATE) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	public int deleteReview(int deleteId) {
@@ -156,5 +196,15 @@ public class ReviewService {
 		}
 
 		return reviewResList;
+	}
+
+
+	// 인센티브 기여도 판단 대상 review 추출
+	private List<ReviewIncentiveTemp> getReviewListToCheckIncentive() {
+		LocalDate today = LocalDate.now();
+		LocalDate editDate = today.minusDays(INCENTIVE_DATE_FLAG);
+		LocalDateTime editDateStart = editDate.atTime(0, 0, 0);
+		LocalDateTime editDateEnd = editDate.atTime(23, 59, 59);
+		return reviewDao.getReviewListToCheckIncentive(editDateStart, editDateEnd);
 	}
 }

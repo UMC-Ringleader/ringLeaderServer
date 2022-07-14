@@ -19,10 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.config.BaseResponse;
 import umc.spring.ringleader.review.ReviewService;
-import umc.spring.ringleader.review.model.dto.PostReviewBookmark;
-import umc.spring.ringleader.review.model.dto.PostReviewReq;
-import umc.spring.ringleader.review.model.dto.PostReviewRes;
-import umc.spring.ringleader.review.model.dto.ReviewRes;
+import umc.spring.ringleader.review.model.dto.*;
 
 @Slf4j
 @RestController
