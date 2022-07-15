@@ -8,8 +8,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import umc.spring.ringleader.contribution1.ContributionService;
 import umc.spring.ringleader.feedback.FeedbackService;
+import umc.spring.ringleader.feedback.model.dto.ReviewFeedBacks;
+import umc.spring.ringleader.report.ReportService;
 import umc.spring.ringleader.review.model.dto.*;
 
 @Service
@@ -18,13 +21,15 @@ public class ReviewService {
 	private final ReviewDao reviewDao;
 	private final ContributionService contributionService;
 	private final FeedbackService feedbackService;
+	private final ReportService reportService;
 
 	@Autowired
 	public ReviewService(ReviewDao reviewDao, ContributionService contributionService,
-		FeedbackService feedbackService) {
+		FeedbackService feedbackService,ReportService reportService) {
 		this.reviewDao = reviewDao;
 		this.contributionService = contributionService;
 		this.feedbackService = feedbackService;
+		this.reportService = reportService;
 	}
 
 	public PostReviewRes saveReview(PostReviewReq req) {
@@ -156,5 +161,29 @@ public class ReviewService {
 		}
 
 		return reviewResList;
+	}
+
+	public ReviewRes getReviewByReviewId(Integer loginId,int reviewId) {
+		ReviewTmp reviewByReviewId = reviewDao.getReviewByReviewId(reviewId);
+		List<String> reviewImgs = reviewDao.getReviewImgs(reviewId);
+		ReviewFeedBacks feedbacksByReviewId = feedbackService.getFeedbacksByReviewId(reviewId);
+
+		if (reportService.checkNonconformity(reviewId)) {
+			String reportedContent = reportService.reportSuggestion(reviewId);
+			if(loginId==null) {
+				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, false,reportedContent);
+			}
+			else{
+				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, true, reportedContent);
+			}
+		}
+		else{
+			if (loginId == null) {
+				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, false);
+			}
+			else{
+				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, true);
+			}
+		}
 	}
 }

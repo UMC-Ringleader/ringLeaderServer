@@ -41,4 +41,24 @@ public class ReviewTmp {
 			bookmarked
 		);
 	}
+
+	public ReviewRes toReviewRes(List<String> imgUrls, ReviewFeedBacks reviewFeedBacks, boolean bookmarked,String reportedContent) {
+		return new ReportedReviewRes(
+				userId,
+				nickName,
+				userContribution,
+				reviewId,
+				title,
+				category,
+				hashtag1,
+				hashtag2,
+				hashtag3,
+				contents,
+				imgUrls,
+				reviewFeedBacks,
+				bookmarked,
+				reportedContent
+		);
+	}
+
 }

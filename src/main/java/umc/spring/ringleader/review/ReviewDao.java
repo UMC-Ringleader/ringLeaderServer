@@ -146,6 +146,16 @@ public class ReviewDao {
 		return jdbcTemplate.update("delete from UserBookmark where userId= ? and reviewId =? ", userId, reviewId);
 	}
 
+	public ReviewTmp getReviewByReviewId(int reviewId) {
+		String query = "select r.*,u.*,urc.*\n" +
+                "from Review as r\n" +
+                "         join(select*FROM User) u on u.userId = r.userId\n" +
+                "         join(select*FROM UserRegionContribution) urc on urc.userId = r.userId and urc.regionId = r.regionId\n" +
+                "where r.reviewId = ?;";
+		int param = reviewId;
+		return jdbcTemplate.queryForObject(query,new ReviewTmpMapper(),param);
+	}
+
 
 	//자주 사용되는 익명 클래스 (new ReviewTmp (rs, rowNum) -> rs.getInt("userId"), ...) 추출하여 재사용
 	private static class ReviewTmpMapper implements RowMapper<ReviewTmp> {
