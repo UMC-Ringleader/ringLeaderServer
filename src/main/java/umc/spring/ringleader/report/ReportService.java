@@ -42,36 +42,30 @@ public class ReportService {
     }
 
     //신고 제안
-    public Optional<PostReportSuggestionRes> reportSuggestion(int reviewId) {
-        if (checkNonconformity(reviewId)) {
-            PostReportSuggestionRes postReportSuggestionRes
-                    = new PostReportSuggestionRes();
-            List<String> reportedContents = reportRepository.getReportSuggestion(reviewId);
-            Report reportList = new Report();
-            List<String> reportingContents = reportList.getReportingContents();
-            int n=0;
-            Map<String, Integer> map = new HashMap<>();
-            for (String s : reportingContents) {
-                int frequency = Collections.frequency(reportedContents, s);
-                map.put(s, frequency);
-            }
-
-            Optional<Integer> max = map.values().stream()
-                    .max(Comparator.comparing(x -> x));
-
-            for (String s : reportingContents) {
-                if (Objects.equals(map.get(s), max.get())) {
-                    postReportSuggestionRes.setReportedContent(s);
-                    postReportSuggestionRes.setReviewId(reviewId);
-                    break;
-                }
-            }
-
-            return Optional.of(postReportSuggestionRes);
+    public String reportSuggestion(int reviewId) {
+        PostReportSuggestionRes postReportSuggestionRes
+                = new PostReportSuggestionRes();
+        List<String> reportedContents = reportRepository.getReportSuggestion(reviewId);
+        Report reportList = new Report();
+        List<String> reportingContents = reportList.getReportingContents();
+        Map<String, Integer> map = new HashMap<>();
+        for (String s : reportingContents) {
+            int frequency = Collections.frequency(reportedContents, s);
+            map.put(s, frequency);
         }
-        else{
-            return Optional.empty();
+
+        Optional<Integer> max = map.values().stream()
+                .max(Comparator.comparing(x -> x));
+
+        String result = "";
+        for (String s : reportingContents) {
+            if (Objects.equals(map.get(s), max.get())) {
+                result = s;
+                break;
+            }
         }
+        return result;
+
     }
 
 }

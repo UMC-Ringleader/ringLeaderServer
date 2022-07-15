@@ -16,6 +16,8 @@ import umc.spring.ringleader.contribution1.ContributionService;
 import umc.spring.ringleader.feedback.FeedbackService;
 import umc.spring.ringleader.report.ReportRepository;
 import umc.spring.ringleader.report.model.CheckingNonconformity;
+import umc.spring.ringleader.feedback.model.dto.ReviewFeedBacks;
+import umc.spring.ringleader.report.ReportService;
 import umc.spring.ringleader.review.model.dto.*;
 
 @Slf4j
@@ -25,16 +27,20 @@ public class ReviewService {
 	private final ReviewDao reviewDao;
 	private final ContributionService contributionService;
 	private final FeedbackService feedbackService;
+	private final ReportService reportService;
 	private final ReportRepository reportRepository;
 
 	@Autowired
 	public ReviewService(ReviewDao reviewDao, ContributionService contributionService,
-						 FeedbackService feedbackService, ReportRepository reportRepository) {
+						 FeedbackService feedbackService, ReportService reportService, ReportRepository reportRepository) {
 		this.reviewDao = reviewDao;
 		this.contributionService = contributionService;
 		this.feedbackService = feedbackService;
+		this.reportService = reportService;
 		this.reportRepository = reportRepository;
 	}
+
+
 
 	public PostReviewRes saveReview(PostReviewReq req) {
 		int savedId = reviewDao.saveReview(req);
@@ -206,5 +212,29 @@ public class ReviewService {
 		LocalDateTime editDateStart = editDate.atTime(0, 0, 0);
 		LocalDateTime editDateEnd = editDate.atTime(23, 59, 59);
 		return reviewDao.getReviewListToCheckIncentive(editDateStart, editDateEnd);
+	}
+
+	public ReviewRes getReviewByReviewId(Integer loginId,int reviewId) {
+		ReviewTmp reviewByReviewId = reviewDao.getReviewByReviewId(reviewId);
+		List<String> reviewImgs = reviewDao.getReviewImgs(reviewId);
+		ReviewFeedBacks feedbacksByReviewId = feedbackService.getFeedbacksByReviewId(reviewId);
+
+		if (reportService.checkNonconformity(reviewId)) {
+			String reportedContent = reportService.reportSuggestion(reviewId);
+			if(loginId==null) {
+				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, false,reportedContent);
+			}
+			else{
+				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, true, reportedContent);
+			}
+		}
+		else{
+			if (loginId == null) {
+				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, false);
+			}
+			else{
+				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, true);
+			}
+		}
 	}
 }

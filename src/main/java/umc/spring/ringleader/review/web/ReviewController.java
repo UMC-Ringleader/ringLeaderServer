@@ -35,6 +35,7 @@ public class ReviewController {
 
 	/**
 	 * Review 등록 메서드
+	 *
 	 * @param postReviewReq
 	 * @return PostReviewRes
 	 */
@@ -44,7 +45,7 @@ public class ReviewController {
 		log.info("[Review][POST] : Review 등록 / reviewId = {}", postReviewReq.getUserId());
 
 		/**
-		예외
+		 예외
 		 Not Null
 		 1. Title
 		 2. hashTag1
@@ -65,8 +66,8 @@ public class ReviewController {
 
 	/**
 	 * Review 삭제 메서드
-	 * @param reviewId
-	 * reviewId에 해당하는 이미지도 모두 삭제
+	 *
+	 * @param reviewId reviewId에 해당하는 이미지도 모두 삭제
 	 * @return
 	 */
 	@ResponseBody
@@ -88,6 +89,7 @@ public class ReviewController {
 
 	/**
 	 * RegionId로 리뷰 조회 (최신순으로 정렬)
+	 *
 	 * @param regionId
 	 * @param loginUserId (Nullable)
 	 * @return
@@ -95,8 +97,8 @@ public class ReviewController {
 	@ResponseBody
 	@GetMapping("/{regionId}")
 	public BaseResponse<List<ReviewRes>> getRegionReviewsLately(
-		@PathVariable int regionId,
-		@RequestParam(required = false) Integer loginUserId
+			@PathVariable int regionId,
+			@RequestParam(required = false) Integer loginUserId
 	) {
 		log.info("[Review][GET] : RegionId로 리뷰 조회 (최신순으로 정렬) / regionId = {}", regionId);
 		log.info("[Review][GET] : 로그인 유저 / category = {}", loginUserId);
@@ -112,6 +114,7 @@ public class ReviewController {
 
 	/**
 	 * category필터 추가하여 리뷰 조회
+	 *
 	 * @param category
 	 * @param regionId
 	 * @param loginUserId (Nullable, Login하지 않은 회원에 대해서)
@@ -120,9 +123,9 @@ public class ReviewController {
 	@ResponseBody
 	@GetMapping("/{regionId}/category")
 	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(
-		@RequestParam String category,
-		@PathVariable Integer regionId,
-		@RequestParam(required = false) Integer loginUserId
+			@RequestParam String category,
+			@PathVariable Integer regionId,
+			@RequestParam(required = false) Integer loginUserId
 	) {
 		log.info("[Review][GET] : category필터 추가하여 리뷰 조회 / category = {} ,regionId = {}", category, regionId);
 		log.info("[Review][GET] : 로그인 유저 / category = {}", loginUserId);
@@ -134,6 +137,7 @@ public class ReviewController {
 
 	/**
 	 * 해당 User의 지역별 Review조회
+	 *
 	 * @param userId
 	 * @param regionId
 	 * @param loginUserId (Nullable, Login하지 않은 회원에 대해서)
@@ -142,9 +146,9 @@ public class ReviewController {
 	@ResponseBody
 	@GetMapping("/profile/{userId}")
 	public BaseResponse<List<ReviewRes>> getRegionReviewsByCategory(
-		@PathVariable int userId,
-		@RequestParam Integer regionId,
-		@RequestParam(required = false) Integer loginUserId
+			@PathVariable int userId,
+			@RequestParam Integer regionId,
+			@RequestParam(required = false) Integer loginUserId
 	) {
 		log.info("[Review][GET] : 해당 User의 지역별 Review조회 / userId = {} ,regionId = {}", userId, regionId);
 		log.info("[Review][GET] : 로그인 유저 / category = {}", loginUserId);
@@ -156,6 +160,7 @@ public class ReviewController {
 
 	/**
 	 * UserId와 ReviewId를 받아 북마크 추가/삭제
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -163,13 +168,18 @@ public class ReviewController {
 	@PostMapping("/bookmark")
 	public BaseResponse<String> updateReviewToBookmark(@RequestBody PostReviewBookmark req) {
 		log.info(
-			"[Review][POST] : 해당 User가 해당 Review에 북마크 버튼 클릭 / userId = {}, reviewId = {}",
-			req.getUserId(), req.getReviewId()
+				"[Review][POST] : 해당 User가 해당 Review에 북마크 버튼 클릭 / userId = {}, reviewId = {}",
+				req.getUserId(), req.getReviewId()
 		);
 
 		String updateResultMessage = reviewService.updateReviewToBookmark(req);
 		return new BaseResponse<>(updateResultMessage);
 	}
 
-
+	@GetMapping("/details/{reviewId}/")
+	public BaseResponse<ReviewRes> gerReviewByReviewId(@PathVariable int reviewId,@RequestParam(required = false) Integer loginUserId) {
+		log.info("[Review][GET] : 해당 User의 지역별 Review조회 / userId = {}, reviewId = {} ", loginUserId, reviewId);
+		ReviewRes reviewByReviewId = reviewService.getReviewByReviewId(loginUserId, reviewId);
+		return new BaseResponse<>(reviewByReviewId);
+	}
 }

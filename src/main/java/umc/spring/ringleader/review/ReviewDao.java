@@ -149,6 +149,16 @@ public class ReviewDao {
 		return jdbcTemplate.update("delete from UserBookmark where userId= ? and reviewId =? ", userId, reviewId);
 	}
 
+	public ReviewTmp getReviewByReviewId(int reviewId) {
+		String query = "select r.*,u.*,urc.*\n" +
+                "from Review as r\n" +
+                "         join(select*FROM User) u on u.userId = r.userId\n" +
+                "         join(select*FROM UserRegionContribution) urc on urc.userId = r.userId and urc.regionId = r.regionId\n" +
+                "where r.reviewId = ?;";
+		int param = reviewId;
+		return jdbcTemplate.queryForObject(query,new ReviewTmpMapper(),param);
+	}
+
 
 	// 인센티브 기여도 판단 대상 review 추출
 	public List<ReviewIncentiveTemp> getReviewListToCheckIncentive(LocalDateTime editDateStart, LocalDateTime editDateEnd) {
