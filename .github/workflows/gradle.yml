@@ -43,23 +43,23 @@ jobs:
     - name: Docker build
       run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_REPO }}/ringleader .
-          docker push ${{ secrets.DOCKER_REPO }}/ringleader
+          docker build --build-arg DEPENDENCY=build/dependency -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} --platform linux/amd64 .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
     ## deploy
     - name: Deploy to prod
       uses: appleboy/ssh-action@master
       id: deploy-prod
-      if: contains(github.ref, 'main')
       with:
           host: ${{ secrets.HOST_PROD }}
           username: ec2-user
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
+              sudo systemctl start docker
               sudo docker rm -f $(docker ps -qa)
-              sudo docker pull ${{ secrets.DOCKER_REPO }}/dotoriham-prod
-              docker-compose up -d
+              sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+              sudo docker run -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
               docker image prune -f
               
   ## time log
