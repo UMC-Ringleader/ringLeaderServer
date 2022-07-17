@@ -50,7 +50,7 @@ jobs:
   deploy:
     needs: build
     name: Deploy
-    runs-on: [ self-hosted, ringledaer ]
+    runs-on: [ self-hosted, ringleader ]
     steps:
       - name: Login to dkhub
         uses: docker/login-action@v2
