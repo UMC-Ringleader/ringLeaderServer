@@ -6,6 +6,7 @@ import umc.spring.ringleader.report.model.CheckingNonconformity;
 import umc.spring.ringleader.report.model.PostReportReq;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Repository
 public class ReportRepository {
@@ -40,6 +41,16 @@ public class ReportRepository {
                         rs.getInt("reportedCount"),
                         rs.getInt("feedbackCount")
                 )
+                , param);
+    }
+
+    public List<String> getReportSuggestion(int reviewId) {
+        String query = "select reportedContent\n" +
+                "from Report\n" +
+                "where reviewId =?";
+        int param = reviewId;
+        return jdbcTemplate.query(query,
+                (rs, rowNum) -> rs.getString("reportedContent")
                 , param);
     }
 }

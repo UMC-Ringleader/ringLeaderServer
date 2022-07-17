@@ -2,6 +2,9 @@ package umc.spring.ringleader.review;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -145,6 +148,31 @@ public class ReviewDao {
 	public int deleteReviewBookmark(int userId, int reviewId) {
 		return jdbcTemplate.update("delete from UserBookmark where userId= ? and reviewId =? ", userId, reviewId);
 	}
+
+	public ReviewTmp getReviewByReviewId(int reviewId) {
+		String query = "select r.*,u.*,urc.*\n" +
+                "from Review as r\n" +
+                "         join(select*FROM User) u on u.userId = r.userId\n" +
+                "         join(select*FROM UserRegionContribution) urc on urc.userId = r.userId and urc.regionId = r.regionId\n" +
+                "where r.reviewId = ?;";
+		int param = reviewId;
+		return jdbcTemplate.queryForObject(query,new ReviewTmpMapper(),param);
+	}
+
+
+	// 인센티브 기여도 판단 대상 review 추출
+	public List<ReviewIncentiveTemp> getReviewListToCheckIncentive(LocalDateTime editDateStart, LocalDateTime editDateEnd) {
+		String getReviewQuery = "select * from Review where created_at between ? and ?";
+		Timestamp getTimeStartParams = Timestamp.valueOf(editDateStart);
+		Timestamp getTimeEndParams = Timestamp.valueOf(editDateEnd);
+		return this.jdbcTemplate.query(getReviewQuery,
+				(rs, rowNum) -> new ReviewIncentiveTemp(
+						rs.getInt("reviewId"),
+						rs.getInt("userId"),
+						rs.getInt("regionId")),
+				getTimeStartParams, getTimeEndParams);
+	}
+
 
 
 	//자주 사용되는 익명 클래스 (new ReviewTmp (rs, rowNum) -> rs.getInt("userId"), ...) 추출하여 재사용

@@ -16,7 +16,11 @@ public class Constant {
 
 	public static final int DAILY_FIRST_LOGIN_COMPENSATION = 1;
 
-
+	// Feedback 에 따른 Contribution
+	public static final int INCENTIVE_DATE_FLAG = 4;
+	public static final int INCENTIVE_VALID_FEEDBACK_COUNT = 10;
+	public static final double INCENTIVE_VALID_FEEDBACK_RATE = 0.8; // (FEEDBACK) / (FEEDBACK + REPORT)
+	public static final int INCENTIVE = 30;
 
 
 	//신고내용 표출시 최소 Feedback 과 Report 비율 (REPORT/FEEDBACK)
