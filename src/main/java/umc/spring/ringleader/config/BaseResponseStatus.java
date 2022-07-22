@@ -24,18 +24,20 @@ public enum BaseResponseStatus {
     /**
      * 3000 : Review관련 오류
      */
+    REVIEW_POST_TITLE_IS_NULL(false,3001,"리뷰 제목은 필수 항목 입니다."),
+    REVIEW_POST_HASHTAG_IS_NULL(false,3002,"최소 1개 이상의 해시태그를 포함하여야 합니다"),
+    REVIEW_POST_CONTENT_IS_NULL(false,3003,"내용은 필수 항목 입니다."),
 
-
+    REVIEW_POST_CATEGORY_IS_NULL(false,3004,"카테고리 선택은 필수 입니다."),
     /**
      * 5000 : Region관련 오류
      */
-
 
     /**
      * 6000 : Database, Server 오류
      */
 
-    REVIEW_NULL(false,6001,"존재하지 않는 리뷰입니다");
+    REVIEW_NULL(false, 6001, "존재하지 않는 리뷰입니다");
 
 
 
