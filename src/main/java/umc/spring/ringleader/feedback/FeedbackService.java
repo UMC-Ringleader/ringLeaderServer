@@ -5,10 +5,8 @@ import static umc.spring.ringleader.config.Constant.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import umc.spring.ringleader.config.Constant;
-import umc.spring.ringleader.contribution1.ContributionService;
+import umc.spring.ringleader.contribution.ContributionService;
 import umc.spring.ringleader.feedback.model.dto.ReviewFeedBacks;
-import umc.spring.ringleader.review.ReviewService;
 
 @Service
 public class FeedbackService {

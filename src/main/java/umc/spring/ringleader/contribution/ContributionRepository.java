@@ -1,13 +1,12 @@
-package umc.spring.ringleader.contribution1;
+package umc.spring.ringleader.contribution;
 
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import umc.spring.ringleader.contribution1.model.ContributionRanking;
-import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
-import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
+import umc.spring.ringleader.contribution.model.ContributionRanking;
+import umc.spring.ringleader.contribution.model.ContributionWithLocation;
+import umc.spring.ringleader.contribution.model.ContributionWithNickNameByReviewId;
 import umc.spring.ringleader.region.dto.GetRegionListRes;
 
 import javax.sql.DataSource;

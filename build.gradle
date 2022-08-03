@@ -43,6 +43,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+    //google login 관련 추가
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation(group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0')
+
 }
 
 tasks.named('test') {

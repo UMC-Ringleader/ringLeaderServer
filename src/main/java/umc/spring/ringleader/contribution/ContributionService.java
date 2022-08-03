@@ -1,15 +1,14 @@
-package umc.spring.ringleader.contribution1;
+package umc.spring.ringleader.contribution;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import umc.spring.ringleader.contribution1.model.ContributionRanking;
-import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
-import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
+import umc.spring.ringleader.contribution.model.ContributionRanking;
+import umc.spring.ringleader.contribution.model.ContributionWithLocation;
+import umc.spring.ringleader.contribution.model.ContributionWithNickNameByReviewId;
 import umc.spring.ringleader.region.RegionService;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
