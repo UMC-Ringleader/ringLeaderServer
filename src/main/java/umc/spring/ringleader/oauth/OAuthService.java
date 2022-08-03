@@ -3,22 +3,26 @@ package umc.spring.ringleader.oauth;
 import static umc.spring.ringleader.config.BaseResponseStatus.*;
 import static umc.spring.ringleader.config.Constant.*;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import umc.spring.ringleader.config.BaseException;
+import umc.spring.ringleader.config.jwt.JwtService;
+import umc.spring.ringleader.login.LoginDao;
 import umc.spring.ringleader.oauth.utils.OAuthAttributeUtil;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class OAuthService {
+
+	private final JwtService jwtService;
+
+	private final LoginDao loginDao;
 
 	public String requestToService(String accessToken, String service) throws BaseException, UnsatisfiedLinkError {
 		String requestURL = null;
@@ -44,6 +48,15 @@ public class OAuthService {
 
 		log.debug("[USER INFO FROM {}] : {}", service, result);
 		return OAuthAttributeUtil.getEmailFromAttribute(result);
+	}
+
+	public String getJwtByEmail(String userEmail) throws BaseException {
+		try {
+			Integer userId = loginDao.getUserIdByEmail(userEmail);
+			return jwtService.createMemberAccessToken(userId, userEmail);
+		} catch (Exception e){
+			throw new BaseException(NO_SUCH_USER);
+		}
 	}
 
 }

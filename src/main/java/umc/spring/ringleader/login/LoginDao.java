@@ -104,4 +104,10 @@ public class LoginDao {
 
         return this.jdbcTemplate.update(modifyUserDetailQuery, modifyUserDetailParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
     }
+
+    public boolean isExistEmail(String email) {
+        String findUserByEmailQuery = "select exists(select userId from User where email = ?)";
+        Integer flag = this.jdbcTemplate.queryForObject(findUserByEmailQuery, Integer.class, email);
+        return flag == 1;
+    }
 }

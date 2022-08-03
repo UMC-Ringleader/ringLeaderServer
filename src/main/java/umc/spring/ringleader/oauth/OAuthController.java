@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +33,12 @@ public class OAuthController {
 		log.debug("[OAUTH LOGIN BY] : {}", service.toUpperCase());
 
 		String userEmail = oAuthService.requestToService(accessToken, service);
+
+		try {
+			oAuthService.getJwtByEmail(userEmail);
+		} catch (BaseException e) {
+			return new ResponseEntity<>(new BaseResponse<>(e.getStatus()), HttpStatus.MOVED_PERMANENTLY);
+		}
 
 		return new ResponseEntity<>(new BaseResponse<>(userEmail), HttpStatus.OK);
 	}

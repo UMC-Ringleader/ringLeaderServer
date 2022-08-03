@@ -39,7 +39,8 @@ public enum BaseResponseStatus {
      * 6000 : Database, Server 오류
      */
 
-    REVIEW_NULL(false, 6001, "존재하지 않는 리뷰입니다");
+    REVIEW_NULL(false, 6001, "존재하지 않는 리뷰입니다"),
+    NO_SUCH_USER(false, 6002, "존재하지 않는 사용자입니다");
 
 
 
