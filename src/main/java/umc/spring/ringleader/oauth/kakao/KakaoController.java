@@ -1,4 +1,4 @@
-package umc.spring.ringleader.kakao;
+package umc.spring.ringleader.oauth.kakao;
 
 
 import lombok.RequiredArgsConstructor;
@@ -24,12 +24,9 @@ public class KakaoController {
         }
         log.debug("[ACCESS TOKEN] : {}", accessToken);
 
-        String accessTokenJsonData = kakaoService.getAccessTokenJsonData(accessToken);
+        String userEmail = kakaoService.getAccessTokenJsonData(accessToken);
 
-        if(accessTokenJsonData=="error") {
-            return new BaseResponse<>("error");
-        }
-        return new BaseResponse<>(accessTokenJsonData);
+        return new BaseResponse<>(userEmail);
 
 
     }
