@@ -3,7 +3,13 @@ package umc.spring.ringleader.oauth;
 import static umc.spring.ringleader.config.BaseResponseStatus.*;
 import static umc.spring.ringleader.config.Constant.*;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +20,7 @@ import umc.spring.ringleader.oauth.utils.OAuthAttributeUtil;
 @Service
 public class OAuthService {
 
-	public String requestToService(String accessToken, String service) throws BaseException {
+	public String requestToService(String accessToken, String service) throws BaseException, UnsatisfiedLinkError {
 		String requestURL = null;
 		if (service.equals("kakao")) {
 			requestURL = KAKAO_GET_USERINFO_URL;
@@ -28,17 +34,13 @@ public class OAuthService {
 		}
 
 		log.debug("[REQUEST URL] : {}", requestURL);
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("Authorization", "Bearer " + accessToken);
 
+		HttpEntity<Object> httpEntity = new HttpEntity<>(httpHeaders);
 
-		String result = WebClient.builder()
-			.baseUrl("https://kapi.kakao.com/v2/user/me")
-			.defaultHeader("Authorization", "Bearer " + accessToken)
-			.build()
-			.post()
-			.retrieve()
-			.bodyToMono(String.class)
-			.block();
-
+		String result = restTemplate.postForEntity(requestURL, httpEntity, String.class).getBody();
 
 		log.debug("[USER INFO FROM {}] : {}", service, result);
 		return OAuthAttributeUtil.getEmailFromAttribute(result);

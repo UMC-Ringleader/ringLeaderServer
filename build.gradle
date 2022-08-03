@@ -41,11 +41,9 @@ dependencies {
     implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
-//    //google login 관련 추가
-//    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-//    implementation(group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0')
+    //google login 관련 추가
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation(group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0')
 
 }
 
