@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import umc.spring.ringleader.contribution1.ContributionService;
+import umc.spring.ringleader.contribution.ContributionService;
 import umc.spring.ringleader.feedback.FeedbackService;
 import umc.spring.ringleader.report.ReportRepository;
 import umc.spring.ringleader.report.model.CheckingNonconformity;
