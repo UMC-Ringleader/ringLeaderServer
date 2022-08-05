@@ -1,17 +1,12 @@
-package umc.spring.ringleader.contribution1;
+package umc.spring.ringleader.contribution;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.config.BaseResponse;
-import umc.spring.ringleader.contribution1.model.ContributionRanking;
-import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
-import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
+import umc.spring.ringleader.contribution.model.ContributionRanking;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController

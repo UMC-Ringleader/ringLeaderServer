@@ -49,7 +49,9 @@ public class Constant {
 	//Bookmark Result Message
 	public static final String BOOKMARK_ADD_MESSAGE = "북마크가 추가 되었습니다.";
 	public static final String BOOKMARK_DELETE_MESSAGE = "북마크가 제거 되었습니다.";
-	
 
+	public static final String KAKAO_GET_USERINFO_URL = "https://kapi.kakao.com/v2/user/me";
+	public static final String GOOGLE_GET_USERINFO_URL = "https://oauth2.googleapis.com/tokeninfo";
+	public static final String NAVER_GET_USERINFO_URL = "https://openapi.naver.com/v1/nid/me";
 
 }

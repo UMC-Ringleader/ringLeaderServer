@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import umc.spring.ringleader.contribution1.ContributionService;
+import umc.spring.ringleader.contribution.ContributionService;
 import umc.spring.ringleader.login.DTO.PostLoginReq;
 import umc.spring.ringleader.login.DTO.PostLoginRes;
 import umc.spring.ringleader.login.DTO.PostSignupReq;

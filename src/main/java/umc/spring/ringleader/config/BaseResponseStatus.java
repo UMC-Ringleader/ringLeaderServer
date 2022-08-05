@@ -19,6 +19,8 @@ public enum BaseResponseStatus {
     POST_SIGNUP_EMPTY_EMAIL(false,2003,"이메일을 다시 입력해주세요."),
     POST_SIGNUP_INVALID_EMAIL(false,2004,"잘못된 이메일 형식입니다."),
     POST_SIGNUP_MISMATCH_PASSWORD(false,2005,"비밀번호와 비밀번호 확인이 일치하지 않습니다."),
+    NOT_PROVIDE_LOGIN_SERVICE(false,2006,"제공하지 않는 로그인 서비스입니다."),
+    NOT_VALID_TOKEN(false,2007,"유효하지 않은 Access-Token 입니다."),
 
 
     /**
@@ -37,7 +39,8 @@ public enum BaseResponseStatus {
      * 6000 : Database, Server 오류
      */
 
-    REVIEW_NULL(false, 6001, "존재하지 않는 리뷰입니다");
+    REVIEW_NULL(false, 6001, "존재하지 않는 리뷰입니다"),
+    NO_SUCH_USER(false, 6002, "존재하지 않는 사용자입니다");
 
 
 
