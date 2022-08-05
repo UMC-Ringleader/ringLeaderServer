@@ -1,6 +1,8 @@
 package umc.spring.ringleader.region;
 
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,8 @@ public class RegionController {
      * @return
      */
     @GetMapping("/{userId}/list")
+    @ApiOperation(value = "User 별 Region 리스트업")
+    @ApiImplicitParam(name = "userId", required = true)
     public BaseResponse<GetRegionTotalRes> getRegionList(@PathVariable("userId") int userId) {
         log.info("[Region][GET] : Region 전체조회 / userId = {}", userId);
         GetRegionTotalRes getRegionTotalRes = regionService.getRegionList(userId);
@@ -43,6 +47,8 @@ public class RegionController {
      * @return
      */
     @GetMapping("/{regionId}/detail")
+    @ApiOperation(value = "Region 세부사항")
+    @ApiImplicitParam(name = "regionId", required = true)
     public BaseResponse<GetRegionRes> getRegionDetail(@PathVariable("regionId") int regionId) {
         log.info("[Region][GET] : Region 세부사항 / regionId = {}", regionId);
         GetRegionRes getRegionRes = regionService.getRegionDetail(regionId);
@@ -50,6 +56,7 @@ public class RegionController {
     }
 
     @GetMapping("/ranking/list")
+    @ApiOperation(value = "Region 활성도 랭킹조회")
     public BaseResponse<List<GetRegionListRes>> getRegionListOrderByActivity() {
         log.info("[Region][GET] : Region 활성도 랭킹");
         List<GetRegionListRes> regionOrderByActivity = regionService.getRegionOrderByActivity();
