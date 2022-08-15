@@ -8,11 +8,17 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import umc.spring.ringleader.config.BaseResponse;
+import umc.spring.ringleader.search.model.GetSearchListRes;
 import umc.spring.ringleader.search.model.PostSearchResultReq;
 import umc.spring.ringleader.search.model.SearchResponseDto;
+import umc.spring.ringleader.search.model.SearchResultRegion;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 @Service
 @Slf4j
@@ -20,6 +26,7 @@ public class SearchApiService {
 
     private final RestTemplate restTemplate;
     private final SearchApiRepository searchApiRepository;
+    private final SearchResultRegion searchResultRegion = new SearchResultRegion();
 
     public SearchApiService(RestTemplate restTemplate, SearchApiRepository searchApiRepository) {
         this.restTemplate = restTemplate;
@@ -29,7 +36,7 @@ public class SearchApiService {
     private final String CLIENT_ID = "FKlT_BMkmAEiurtLSm2x";
     private final String CLIENT_SECRET = "Yo6xo7jkDT";
 
-    public BaseResponse<SearchResponseDto> searchLocal(String keyword) {
+    public List<SearchResponseDto.Item> searchLocal(String keyword) {
 
         URI uri = UriComponentsBuilder
                 .fromUriString("https://openapi.naver.com")
@@ -51,12 +58,42 @@ public class SearchApiService {
 
         log.info("uri : {}", uri);
         ResponseEntity<SearchResponseDto> result = restTemplate.exchange(req, SearchResponseDto.class);
-        return new BaseResponse<>(result.getBody());
+        List<SearchResponseDto.Item> items = Arrays.stream(result.getBody().getItems())
+                .filter(a -> a.getAddress().contains("서울"))
+                .toList();
+        items.stream().map(SearchResponseDto.Item::itemToDto)
+                .forEach(a -> searchApiRepository.updateSearchedResultList(a, getRegionId(a)));
+
+        return items;
     }
 
     public String createSearchedResult(PostSearchResultReq postSearchResultReq){
-        searchApiRepository.updateSearchedResult(postSearchResultReq.getReviewId(),postSearchResultReq.getRegionId(), postSearchResultReq.getTitle(), postSearchResultReq.getCategory(),
-                postSearchResultReq.getAddress(), postSearchResultReq.getRoadAddress(), postSearchResultReq.getMapx(), postSearchResultReq.getMapy());
+        int regionId = getRegionId(postSearchResultReq);
+
+        searchApiRepository.updateSearchedResult(postSearchResultReq.getTitle().replace("<b>", "").replace("</b>", ""), postSearchResultReq.getCategory(),
+                postSearchResultReq.getAddress(), postSearchResultReq.getRoadAddress(), postSearchResultReq.getMapx(), postSearchResultReq.getMapy(), regionId);
         return "선택결과가 저장되었습니다.";
+    }
+
+    private int getRegionId(PostSearchResultReq postSearchResultReq) {
+        String address = postSearchResultReq.getAddress();
+        String roadAddress = postSearchResultReq.getRoadAddress();
+
+        String s = searchResultRegion.getSpecificRoadArea().stream()
+                .filter(roadAddress::contains)
+                .findAny()
+                .orElse(searchResultRegion.getSpecificArea().stream()
+                        .filter(address::contains)
+                        .findAny()
+                        .orElse(searchResultRegion.getArea().stream()
+                                .filter(address::contains)
+                                .findAny().get()));
+
+        return searchApiRepository.findRegionId(s);
+
+    }
+
+    public List<GetSearchListRes> getSavedList() {
+        return searchApiRepository.findAllSavedList();
     }
 }

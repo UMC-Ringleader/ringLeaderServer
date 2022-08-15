@@ -2,12 +2,13 @@ package umc.spring.ringleader.search.model;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+
 public class PostSearchResultReq {
 
     public PostSearchResultReq() {
@@ -20,5 +21,15 @@ public class PostSearchResultReq {
     private int mapx;
     private int mapy;
     private int regionId;
-    private int reviewId;
+
+    @Builder
+    public PostSearchResultReq(String title, String category, String address, String roadAddress, int mapx, int mapy) {
+        this.title = title;
+        this.category = category;
+        this.address = address;
+        this.roadAddress = roadAddress;
+        this.mapx = mapx;
+        this.mapy = mapy;
+    }
+
 }
