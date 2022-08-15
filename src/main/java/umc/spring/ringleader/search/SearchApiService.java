@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -60,7 +61,7 @@ public class SearchApiService {
         ResponseEntity<SearchResponseDto> result = restTemplate.exchange(req, SearchResponseDto.class);
         List<SearchResponseDto.Item> items = Arrays.stream(result.getBody().getItems())
                 .filter(a -> a.getAddress().contains("서울"))
-                .toList();
+                .collect(Collectors.toList());
         items.stream().map(SearchResponseDto.Item::itemToDto)
                 .forEach(a -> searchApiRepository.updateSearchedResultList(a, getRegionId(a)));
 
