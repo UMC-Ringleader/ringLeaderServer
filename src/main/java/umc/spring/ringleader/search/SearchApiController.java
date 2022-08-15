@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.config.BaseResponse;
 import umc.spring.ringleader.search.model.GetSearchListRes;
 import umc.spring.ringleader.search.model.PostSearchResultReq;
@@ -26,7 +27,11 @@ public class SearchApiController {
     @ApiImplicitParam(name = "keyword" ,value = "상호명", required = true)
     @GetMapping("/search")
     public BaseResponse<List<SearchResponseDto.Item>> getLocal(@RequestParam String keyword) {
-        return new BaseResponse<>(searchApiService.searchLocal(keyword));
+        try {
+            return new BaseResponse<>(searchApiService.searchLocal(keyword));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 
     @ApiOperation(value = "검색결과를 DB에 저장")
@@ -41,8 +46,13 @@ public class SearchApiController {
     })
     @PostMapping("/search/create")
     public BaseResponse<String> createSearchedResult(@RequestBody PostSearchResultReq postSearchResultReq) {
-        String result = searchApiService.createSearchedResult(postSearchResultReq);
-        return new BaseResponse<>(result);
+        try {
+            String result = searchApiService.createSearchedResult(postSearchResultReq);
+            return new BaseResponse<>(result);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
     }
 
     @ApiOperation(value = "저장된 상호 목록 최신순 조회")
