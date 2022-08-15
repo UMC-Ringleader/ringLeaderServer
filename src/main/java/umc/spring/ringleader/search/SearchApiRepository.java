@@ -37,7 +37,9 @@ public class SearchApiRepository {
     }
 
     public List<GetSearchListRes> findAllSavedList() {
-        String query = "SELECT * FROM RegionReviewDetails ";
+        String query = "SELECT*\n" +
+                "FROM RegionReviewDetails\n" +
+                "ORDER BY created_at desc";
         return jdbcTemplate.query(query,
                 (rs, rowNum) -> new GetSearchListRes(
                         rs.getInt("RRDId"),

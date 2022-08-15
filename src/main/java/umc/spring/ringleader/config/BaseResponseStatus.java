@@ -40,7 +40,11 @@ public enum BaseResponseStatus {
      */
 
     REVIEW_NULL(false, 6001, "존재하지 않는 리뷰입니다"),
-    NO_SUCH_USER(false, 6002, "존재하지 않는 사용자입니다");
+    NO_SUCH_USER(false, 6002, "존재하지 않는 사용자입니다"),
+
+    FAILED_TO_CREATE_SEARCH_RESULT_IN_SERVER(false,6040,"검색 결과 저장 서버 오류."),
+    FAILED_TO_SEARCH_IN_SERVER(false, 6041, "상호명 검색 서버 오류"),
+    FAILED_TO_GET_REGION_ID_IN_SERVER(false,6042,"Region 식별자 조회 서버 오류");
 
 
 
