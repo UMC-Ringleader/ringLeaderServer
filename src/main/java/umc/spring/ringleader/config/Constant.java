@@ -54,4 +54,8 @@ public class Constant {
 	public static final String GOOGLE_GET_USERINFO_URL = "https://oauth2.googleapis.com/tokeninfo";
 	public static final String NAVER_GET_USERINFO_URL = "https://openapi.naver.com/v1/nid/me";
 
+
+	// 깃발 관련 상수
+	public static final int FLAG_SHAPE_GAP = 100; // 깃발 종류 사이 점수 차이
+	public static final int FLAG_COLOR_GAP = 20; // 깃발 색상 사이 점수 차이
 }
