@@ -36,16 +36,18 @@ public class SearchApiRepository {
         return jdbcTemplate.queryForObject(query, int.class, param);
     }
 
-    public List<GetSearchListRes> findAllSavedList() {
+    public List<GetSearchListRes> findAllSavedList(int regionId) {
         String query = "SELECT*\n" +
                 "FROM RegionReviewDetails\n" +
+                "WHERE regionId = ?" +
                 "ORDER BY created_at desc";
+        int param = regionId;
         return jdbcTemplate.query(query,
                 (rs, rowNum) -> new GetSearchListRes(
                         rs.getInt("RRDId"),
                         rs.getString("title"),
                         rs.getString("address")
-                )
+                ), param
         );
     }
 }

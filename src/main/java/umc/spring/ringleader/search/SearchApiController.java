@@ -24,7 +24,7 @@ public class SearchApiController {
     }
 
     @ApiOperation(value = "네이버 Api 를 이용하여 상호명 검색 결과")
-    @ApiImplicitParam(name = "keyword" ,value = "상호명", required = true)
+    @ApiImplicitParam(name = "keyword", value = "상호명", required = true)
     @GetMapping("/search")
     public BaseResponse<List<SearchResponseDto.Item>> getLocal(@RequestParam String keyword) {
         try {
@@ -36,13 +36,13 @@ public class SearchApiController {
 
     @ApiOperation(value = "검색결과를 DB에 저장")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "title" ,value = "상호명", required = true),
-            @ApiImplicitParam(name = "category" ,value = "상호명", required = true),
-            @ApiImplicitParam(name = "address" ,value = "상호명", required = true),
-            @ApiImplicitParam(name = "roadAddress" ,value = "상호명", required = true),
-            @ApiImplicitParam(name = "mapx" ,value = "상호명", required = true),
-            @ApiImplicitParam(name = "mapy" ,value = "상호명", required = true),
-            @ApiImplicitParam(name = "regionId" ,value = "Region 식별자", required = true)
+            @ApiImplicitParam(name = "title", value = "상호명", required = true),
+            @ApiImplicitParam(name = "category", value = "상호명", required = true),
+            @ApiImplicitParam(name = "address", value = "상호명", required = true),
+            @ApiImplicitParam(name = "roadAddress", value = "상호명", required = true),
+            @ApiImplicitParam(name = "mapx", value = "상호명", required = true),
+            @ApiImplicitParam(name = "mapy", value = "상호명", required = true),
+            @ApiImplicitParam(name = "regionId", value = "Region 식별자", required = true)
     })
     @PostMapping("/search/create")
     public BaseResponse<String> createSearchedResult(@RequestBody PostSearchResultReq postSearchResultReq) {
@@ -56,8 +56,14 @@ public class SearchApiController {
     }
 
     @ApiOperation(value = "저장된 상호 목록 최신순 조회")
-    @GetMapping("/search/list")
-    public BaseResponse<List<GetSearchListRes>> getSavedList() {
-        return new BaseResponse<>(searchApiService.getSavedList());
+    @ApiImplicitParam(name = "regionId", value = "지역 식별자", required = true)
+    @GetMapping("/search/list/{regionId}")
+    public BaseResponse<List<GetSearchListRes>> getSavedList(@PathVariable int regionId) {
+        try {
+            return new BaseResponse<>(searchApiService.getSavedList(regionId));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 }
+
