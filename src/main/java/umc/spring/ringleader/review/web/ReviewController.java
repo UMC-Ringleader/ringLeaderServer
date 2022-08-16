@@ -70,12 +70,13 @@ public class ReviewController {
 			} else if (postReviewReq.getHashtags().size() > 3) {
 				throw new BaseException(REVIEW_POST_HASHTAG_EXCEED);
 			}
+			PostReviewRes res = reviewService.saveReview(postReviewReq);
+			return new BaseResponse<>(res);
 		} catch (BaseException e) {
 			return new BaseResponse<>(e.getStatus());
 		}
 
-		PostReviewRes res = reviewService.saveReview(postReviewReq);
-		return new BaseResponse<>(res);
+
 	}
 
 	/**

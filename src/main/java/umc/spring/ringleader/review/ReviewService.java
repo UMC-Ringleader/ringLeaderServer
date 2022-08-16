@@ -1,5 +1,6 @@
 package umc.spring.ringleader.review;
 
+import static umc.spring.ringleader.config.BaseResponseStatus.POST_REVIEW_FAILED_IN_SERVER;
 import static umc.spring.ringleader.config.Constant.*;
 
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.contribution.ContributionService;
 import umc.spring.ringleader.feedback.FeedbackService;
 import umc.spring.ringleader.report.ReportRepository;
@@ -42,15 +44,20 @@ public class ReviewService {
 
 
 
-	public PostReviewRes saveReview(PostReviewReq req) {
+	public PostReviewRes saveReview(PostReviewReq req) throws BaseException {
 		int savedId;
-		if(req.getHashtags().size()==3){
-			savedId = reviewDao.saveReviewForThreeHashTags(req);
-		} else if (req.getHashtags().size() == 2) {
-			savedId = reviewDao.saveReviewForTwoHashTags(req);
-		} else{
-			savedId = reviewDao.saveReviewForSingleHashTag(req);
+		try {
+			if (req.getHashtags().size() == 3) {
+				savedId = reviewDao.saveReviewForThreeHashTags(req);
+			} else if (req.getHashtags().size() == 2) {
+				savedId = reviewDao.saveReviewForTwoHashTags(req);
+			} else {
+				savedId = reviewDao.saveReviewForSingleHashTag(req);
+			}
+		} catch (Exception e) {
+			throw new BaseException(POST_REVIEW_FAILED_IN_SERVER);
 		}
+
 
 		//Image가 없는 경우 기여도 + 5
 		if (req.getPostImages() == null) {

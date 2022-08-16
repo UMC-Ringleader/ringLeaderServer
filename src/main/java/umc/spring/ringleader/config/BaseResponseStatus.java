@@ -46,7 +46,7 @@ public enum BaseResponseStatus {
     FAILED_TO_SEARCH_IN_SERVER(false, 6041, "상호명 검색 서버 오류"),
     FAILED_TO_GET_REGION_ID_IN_SERVER(false, 6042, "Region 식별자 조회 서버 오류"),
     FAILED_TO_GET_REGION_REVIEW_SEARCH_LIST_IN_SERVER(false, 6043, "지역별 리뷰 조회 리스트 검색 서버 오류"),
-    ;
+    POST_REVIEW_FAILED_IN_SERVER(false, 6011, "리뷰 생성 서버 오류");
 
 
     private final boolean isSuccess;
