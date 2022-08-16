@@ -106,7 +106,11 @@ public class SearchApiService {
         return searchApiRepository.findRegionId(s);
     }
 
-    public List<GetSearchListRes> getSavedList() {
-        return searchApiRepository.findAllSavedList();
+    public List<GetSearchListRes> getSavedList(int regionId) throws BaseException{
+        try {
+            return searchApiRepository.findAllSavedList(regionId);
+        } catch (Exception e) {
+            throw new BaseException(FAILED_TO_GET_REGION_REVIEW_SEARCH_LIST_IN_SERVER);
+        }
     }
 }
