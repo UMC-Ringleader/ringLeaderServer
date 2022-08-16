@@ -84,6 +84,10 @@ public class ContributionService {
         }
     }
 
+    public int getContribution(int userId, int regionId) {
+        return repository.getContribution(userId, regionId);
+    }
+
 
     // Contribution 을 통한 User Grade
     public Grade getGradeByContribution(int contribution) {
@@ -125,4 +129,6 @@ public class ContributionService {
             return "blue";
         }
     }
+
+
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import umc.spring.ringleader.config.BaseResponse;
 import umc.spring.ringleader.contribution.model.ContributionRanking;
+import umc.spring.ringleader.contribution.model.Grade;
 
 import java.util.List;
 
@@ -54,5 +55,15 @@ public class ContributionController {
 
         return new BaseResponse<>(result);
 
+    }
+
+
+    // grade test
+    @GetMapping("/grade/{userId}")
+    public BaseResponse<Grade> getUserGrade(@RequestParam int regionId, @PathVariable int userId) {
+        log.info("[Contribution][GET] : User 개인 랭킹조회 api / regionId = {}, userId = {}", regionId, userId);
+        int contribution = service.getContribution(userId, regionId);
+        Grade result = service.getGradeByContribution(contribution);
+        return new BaseResponse<>(result);
     }
 }
