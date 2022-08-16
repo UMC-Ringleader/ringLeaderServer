@@ -61,12 +61,14 @@ public class ReviewController {
 		try {
 			if (postReviewReq.getTitle() == null) {
 				throw new BaseException(REVIEW_POST_TITLE_IS_NULL);
-			} else if (postReviewReq.getHashtag1() == null) {
+			} else if (postReviewReq.getHashtags().size()== 0) {
 				throw new BaseException(REVIEW_POST_HASHTAG_IS_NULL);
 			} else if (postReviewReq.getContents() == null) {
 				throw new BaseException(REVIEW_POST_CONTENT_IS_NULL);
 			} else if (postReviewReq.getCategory() == null) {
 				throw new BaseException(REVIEW_POST_CONTENT_IS_NULL);
+			} else if (postReviewReq.getHashtags().size() > 3) {
+				throw new BaseException(REVIEW_POST_HASHTAG_EXCEED);
 			}
 		} catch (BaseException e) {
 			return new BaseResponse<>(e.getStatus());

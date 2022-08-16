@@ -18,9 +18,7 @@ public class PostReviewReq {
 	@ApiModelProperty(required = true, example = "음식점")
 	private String category;
 	@ApiModelProperty(required = true, example = "한식")
-	private String hashtag1;
-	private String hashtag2;
-	private String hashtag3;
+	private List<String> hashtags;
 
 	@ApiModelProperty(required = true)
 	private String contents;

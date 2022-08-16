@@ -43,7 +43,14 @@ public class ReviewService {
 
 
 	public PostReviewRes saveReview(PostReviewReq req) {
-		int savedId = reviewDao.saveReview(req);
+		int savedId;
+		if(req.getHashtags().size()==3){
+			savedId = reviewDao.saveReviewForThreeHashTags(req);
+		} else if (req.getHashtags().size() == 2) {
+			savedId = reviewDao.saveReviewForTwoHashTags(req);
+		} else{
+			savedId = reviewDao.saveReviewForSingleHashTag(req);
+		}
 
 		//Image가 없는 경우 기여도 + 5
 		if (req.getPostImages() == null) {

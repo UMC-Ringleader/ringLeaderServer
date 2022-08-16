@@ -26,16 +26,16 @@ public class ReviewDao {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	public int saveReview(PostReviewReq req) {
+	public int saveReviewForThreeHashTags(PostReviewReq req) {
 		String createReviewQuery = "insert into Review ("
 			+ "title, category, hashtag1, hashtag2, hashtag3, regionId, contents, userId"
 			+ ") VALUES (?,?,?,?,?,?,?,?)";
 		Object[] createReviewParams = new Object[] {
 			req.getTitle(),
 			req.getCategory(),
-			req.getHashtag1(),
-			req.getHashtag2(),
-			req.getHashtag3(),
+			req.getHashtags().get(0),
+			req.getHashtags().get(1),
+			req.getHashtags().get(2),
 			req.getRegionId(),
 			req.getContents(),
 			req.getUserId()
@@ -192,6 +192,45 @@ public class ReviewDao {
 				rs.getString("contents")
 			);
 		}
+	}
+
+	public int saveReviewForTwoHashTags(PostReviewReq req) {
+		String createReviewQuery = "insert into Review ("
+				+ "title, category, hashtag1, hashtag2, regionId, contents, userId"
+				+ ") VALUES (?,?,?,?,?,?,?)";
+		Object[] createReviewParams = new Object[] {
+				req.getTitle(),
+				req.getCategory(),
+				req.getHashtags().get(0),
+				req.getHashtags().get(1),
+				req.getRegionId(),
+				req.getContents(),
+				req.getUserId()
+		}; // 동적 쿼리의 ?부분에 주입될 값
+		this.jdbcTemplate.update(createReviewQuery, createReviewParams);
+
+		String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된 Row의 id값을 가져온다.
+		return this.jdbcTemplate.queryForObject(lastInsertIdQuery,
+				Integer.class);
+	}
+
+	public int saveReviewForSingleHashTag(PostReviewReq req) {
+		String createReviewQuery = "insert into Review ("
+				+ "title, category, hashtag1,regionId, contents, userId"
+				+ ") VALUES (?,?,?,?,?,?)";
+		Object[] createReviewParams = new Object[] {
+				req.getTitle(),
+				req.getCategory(),
+				req.getHashtags().get(0),
+				req.getRegionId(),
+				req.getContents(),
+				req.getUserId()
+		}; // 동적 쿼리의 ?부분에 주입될 값
+		this.jdbcTemplate.update(createReviewQuery, createReviewParams);
+
+		String lastInsertIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된 Row의 id값을 가져온다.
+		return this.jdbcTemplate.queryForObject(lastInsertIdQuery,
+				Integer.class);
 	}
 
 }
