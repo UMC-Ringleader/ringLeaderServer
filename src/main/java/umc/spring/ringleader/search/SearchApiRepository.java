@@ -3,8 +3,11 @@ package umc.spring.ringleader.search;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import umc.spring.ringleader.search.model.*;
 import umc.spring.ringleader.search.model.GetSearchListRes;
 import umc.spring.ringleader.search.model.PostSearchResultReq;
+import umc.spring.ringleader.search.model.SearchTmp;
+
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -49,5 +52,31 @@ public class SearchApiRepository {
                         rs.getString("address")
                 ), param
         );
+    }
+
+    public List<SearchTmp> getReviews(String searchWord) {
+        String getSearchReviewsQuery = "Select *\n"
+                + "From Review as R, User as U, UserRegionContribution as URC\n"
+                + "WHERE U.userId = R.userId\n"
+                + "AND URC.regionId = R.regionId\n"
+                + "AND URC.userId = R.userId\n"
+                + "AND(R.title LIKE concat('%',?,'%')\n"
+                + "OR R.hashtag1 LIKE concat('%',?,'%')\n"
+                + "OR R.hashtag2 LIKE concat('%',?,'%')\n"
+                + "OR R.hashtag3 LIKE concat('%',?,'%'))\n"
+                + "ORDER BY R.created_at DESC;";
+        return this.jdbcTemplate.query(getSearchReviewsQuery,
+                (rs, rowNum) -> new SearchTmp(
+                        rs.getInt("userId"),
+                        rs.getString("nickName"),
+                        rs.getInt("contribution"),
+                        rs.getInt("reviewId"),
+                        rs.getString("title"),
+                        rs.getString("category"),
+                        rs.getString("hashtag1"),
+                        rs.getString("hashtag2"),
+                        rs.getString("hashtag3"),
+                        rs.getString("contents")
+                ), searchWord,searchWord, searchWord, searchWord);
     }
 }

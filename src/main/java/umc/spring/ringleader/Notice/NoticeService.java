@@ -1,11 +1,11 @@
-package umc.spring.ringleader.notice1;
+package umc.spring.ringleader.Notice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import umc.spring.ringleader.notice1.DTO.NoticeRes;
-import umc.spring.ringleader.notice1.DTO.PostNoticeReq;
-import umc.spring.ringleader.notice1.DTO.PostNoticeRes;
+import umc.spring.ringleader.Notice.DTO.NoticeRes;
+import umc.spring.ringleader.Notice.DTO.PostNoticeReq;
+import umc.spring.ringleader.Notice.DTO.PostNoticeRes;
 
 import java.util.List;
 

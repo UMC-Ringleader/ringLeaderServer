@@ -1,4 +1,4 @@
-package umc.spring.ringleader.notice1.DTO;
+package umc.spring.ringleader.Notice.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -9,10 +9,7 @@ import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.config.BaseResponse;
-import umc.spring.ringleader.search.model.GetSearchListRes;
-import umc.spring.ringleader.search.model.PostSearchResultReq;
-import umc.spring.ringleader.search.model.SearchResponseDto;
-import umc.spring.ringleader.search.model.SearchResultRegion;
+import umc.spring.ringleader.search.model.*;
 
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -112,5 +109,9 @@ public class SearchApiService {
         } catch (Exception e) {
             throw new BaseException(FAILED_TO_GET_REGION_REVIEW_SEARCH_LIST_IN_SERVER);
         }
+    }
+
+    public List<SearchTmp> getSearchReviews(String searchWord) {
+        return searchApiRepository.getReviews(searchWord);
     }
 }

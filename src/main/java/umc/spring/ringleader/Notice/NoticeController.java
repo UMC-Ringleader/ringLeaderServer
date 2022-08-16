@@ -1,21 +1,18 @@
-package umc.spring.ringleader.notice1;
+package umc.spring.ringleader.Notice;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import umc.spring.ringleader.notice1.DTO.NoticeRes;
-import umc.spring.ringleader.notice1.DTO.PostNoticeReq;
-import umc.spring.ringleader.notice1.DTO.PostNoticeRes;
+import umc.spring.ringleader.Notice.DTO.NoticeRes;
+import umc.spring.ringleader.Notice.DTO.PostNoticeReq;
+import umc.spring.ringleader.Notice.DTO.PostNoticeRes;
 import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.config.BaseResponse;
 
-import javax.transaction.Transaction;
-
 import java.util.List;
 
-import static umc.spring.ringleader.config.BaseResponseStatus.POST_Login_EMPTY_EMAIL;
 import static umc.spring.ringleader.config.BaseResponseStatus.POST_Login_EMPTY_EMAIL;
 
 @Slf4j

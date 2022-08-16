@@ -10,6 +10,7 @@ import umc.spring.ringleader.config.BaseResponse;
 import umc.spring.ringleader.search.model.GetSearchListRes;
 import umc.spring.ringleader.search.model.PostSearchResultReq;
 import umc.spring.ringleader.search.model.SearchResponseDto;
+import umc.spring.ringleader.search.model.SearchTmp;
 
 import java.util.List;
 
@@ -64,6 +65,18 @@ public class SearchApiController {
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
+    }
+
+    /**
+     * Review 검색 API
+     * (제목, 해시태그)
+     */
+    @ResponseBody
+    @GetMapping("/search/review")
+    public List<SearchTmp> getSearchReview(
+            @RequestParam(value="searchWord") String searchWord
+    ) {
+        return searchApiService.getSearchReviews(searchWord);
     }
 }
 

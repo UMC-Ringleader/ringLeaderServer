@@ -1,11 +1,11 @@
-package umc.spring.ringleader.notice1;
+package umc.spring.ringleader.Notice;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
-import umc.spring.ringleader.notice1.DTO.NoticeRes;
-import umc.spring.ringleader.notice1.DTO.PostNoticeReq;
+import umc.spring.ringleader.Notice.DTO.NoticeRes;
+import umc.spring.ringleader.Notice.DTO.PostNoticeReq;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
