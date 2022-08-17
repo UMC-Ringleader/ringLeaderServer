@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetSearchListRes {
-    private int rrdId;
+    private int RRDId;
     private String title;
     private String address;
 }

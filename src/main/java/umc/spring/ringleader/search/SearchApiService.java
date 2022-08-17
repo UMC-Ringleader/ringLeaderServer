@@ -8,7 +8,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import umc.spring.ringleader.config.BaseException;
-import umc.spring.ringleader.config.BaseResponse;
 import umc.spring.ringleader.search.model.GetSearchListRes;
 import umc.spring.ringleader.search.model.PostSearchResultReq;
 import umc.spring.ringleader.search.model.SearchResponseDto;
@@ -16,6 +15,7 @@ import umc.spring.ringleader.search.model.SearchResultRegion;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -40,8 +40,7 @@ public class SearchApiService {
     private final String CLIENT_ID = "FKlT_BMkmAEiurtLSm2x";
     private final String CLIENT_SECRET = "Yo6xo7jkDT";
 
-    public List<SearchResponseDto.Item> searchLocal(String keyword) throws BaseException {
-
+    public List<GetSearchListRes> searchLocal(String keyword) throws BaseException {
         try {
             URI uri = UriComponentsBuilder
                     .fromUriString("https://openapi.naver.com")
@@ -66,14 +65,22 @@ public class SearchApiService {
             List<SearchResponseDto.Item> items = Arrays.stream(result.getBody().getItems())
                     .filter(a -> a.getAddress().contains("서울"))
                     .collect(Collectors.toList());
-            items.stream().map(SearchResponseDto.Item::itemToDto)
-                    .forEach(a -> searchApiRepository.updateSearchedResultList(a, getRegionId(a)));
-            return items;
+
+            List<PostSearchResultReq> collect = items.stream().map(SearchResponseDto.Item::itemToDto).collect(Collectors.toList());
+
+            List<GetSearchListRes> searchedList = new ArrayList<>();
+            for (PostSearchResultReq p : collect) {
+                if (searchApiRepository.checkingExistingWithTitleAndAddress(p.getTitle().replace("<b>", "").replace("</b>", ""), p.getAddress()) == 0) {
+                    int searchedResultList = searchApiRepository.updateSearchedResultList(p, getRegionId(p));
+                    searchedList.add(new GetSearchListRes(searchedResultList, p.getTitle().replace("<b>", "").replace("</b>", ""), p.getAddress()));
+                } else {
+                    searchedList.add(searchApiRepository.findByTitleAndAddress(p.getTitle().replace("<b>", "").replace("</b>", ""), p.getAddress()));
+                }
+            }
+            return searchedList;
         } catch (Exception e) {
             throw new BaseException(FAILED_TO_SEARCH_IN_SERVER);
         }
-
-
     }
 
     public String createSearchedResult(PostSearchResultReq postSearchResultReq) throws BaseException {
@@ -106,11 +113,15 @@ public class SearchApiService {
         return searchApiRepository.findRegionId(s);
     }
 
-    public List<GetSearchListRes> getSavedList(int regionId) throws BaseException{
+    public List<GetSearchListRes> getSavedList(int regionId) throws BaseException {
         try {
             return searchApiRepository.findAllSavedList(regionId);
         } catch (Exception e) {
             throw new BaseException(FAILED_TO_GET_REGION_REVIEW_SEARCH_LIST_IN_SERVER);
         }
+    }
+
+    public List<GetSearchListRes> searchDataBase(String keyword) {
+        return searchApiRepository.findByTitle(keyword);
     }
 }

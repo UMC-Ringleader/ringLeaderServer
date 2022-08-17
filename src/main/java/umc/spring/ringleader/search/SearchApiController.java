@@ -23,10 +23,10 @@ public class SearchApiController {
         this.searchApiService = searchApiService;
     }
 
-    @ApiOperation(value = "네이버 Api 를 이용하여 상호명 검색 결과")
+    @ApiOperation(value = "네이버 Api만 이용하여 상호명 검색 결과")
     @ApiImplicitParam(name = "keyword", value = "상호명", required = true)
     @GetMapping("/search")
-    public BaseResponse<List<SearchResponseDto.Item>> getLocal(@RequestParam String keyword) {
+    public BaseResponse<List<GetSearchListRes>> getLocal(@RequestParam String keyword) {
         try {
             return new BaseResponse<>(searchApiService.searchLocal(keyword));
         } catch (BaseException e) {
@@ -34,27 +34,39 @@ public class SearchApiController {
         }
     }
 
-    @ApiOperation(value = "검색결과를 DB에 저장")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "title", value = "상호명", required = true),
-            @ApiImplicitParam(name = "category", value = "상호명", required = true),
-            @ApiImplicitParam(name = "address", value = "상호명", required = true),
-            @ApiImplicitParam(name = "roadAddress", value = "상호명", required = true),
-            @ApiImplicitParam(name = "mapx", value = "상호명", required = true),
-            @ApiImplicitParam(name = "mapy", value = "상호명", required = true),
-            @ApiImplicitParam(name = "regionId", value = "Region 식별자", required = true)
-    })
-    @PostMapping("/search/create")
-    public BaseResponse<String> createSearchedResult(@RequestBody PostSearchResultReq postSearchResultReq) {
+    @ApiOperation(value = "DB 조회 및 결과 없는 경우 네이버 Api 를 이용하여 상호명 검색 결과")
+    @ApiImplicitParam(name = "keyword", value = "상호명", required = true)
+    @GetMapping("/search/saving")
+    public BaseResponse<List<GetSearchListRes>> getSavedList(@RequestParam String keyword) {
         try {
-            String result = searchApiService.createSearchedResult(postSearchResultReq);
-            return new BaseResponse<>(result);
+            List<GetSearchListRes> getSearchListRes = searchApiService.searchDataBase(keyword);
+            if (getSearchListRes.size() == 0) {
+                return new BaseResponse<>(searchApiService.searchLocal(keyword));
+            }
+            return new BaseResponse<>(getSearchListRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
-
     }
-
+//    @ApiOperation(value = "검색결과를 DB에 저장")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "title", value = "상호명", required = true),
+//            @ApiImplicitParam(name = "category", value = "상호명", required = true),
+//            @ApiImplicitParam(name = "address", value = "상호명", required = true),
+//            @ApiImplicitParam(name = "roadAddress", value = "상호명", required = true),
+//            @ApiImplicitParam(name = "mapx", value = "상호명", required = true),
+//            @ApiImplicitParam(name = "mapy", value = "상호명", required = true),
+//            @ApiImplicitParam(name = "regionId", value = "Region 식별자", required = true)
+//    })
+//    @PostMapping("/search/create")
+//    public BaseResponse<String> createSearchedResult(@RequestBody PostSearchResultReq postSearchResultReq) {
+//        try {
+//            String result = searchApiService.createSearchedResult(postSearchResultReq);
+//            return new BaseResponse<>(result);
+//        } catch (BaseException e) {
+//            return new BaseResponse<>(e.getStatus());
+//        }
+//    }
     @ApiOperation(value = "저장된 상호 목록 최신순 조회")
     @ApiImplicitParam(name = "regionId", value = "지역 식별자", required = true)
     @GetMapping("/search/list/{regionId}")
