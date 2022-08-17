@@ -228,4 +228,17 @@ public class ReviewController {
 		ReviewRes reviewByReviewId = reviewService.getReviewByReviewId(loginUserId, reviewId);
 		return new BaseResponse<>(reviewByReviewId);
 	}
+
+
+	/**
+	 * Review 검색 API
+	 * (제목, 해시태그)
+	 */
+	@ResponseBody
+	@GetMapping("/search/review")
+	public List<SearchTmp> getSearchReview(
+			@RequestParam(value="searchWord") String searchWord
+	) {
+		return reviewService.getSearchReviews(searchWord);
+	}
 }

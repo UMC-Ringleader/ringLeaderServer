@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import umc.spring.ringleader.search.model.GetSearchListRes;
 import umc.spring.ringleader.search.model.PostSearchResultReq;
+import umc.spring.ringleader.review.model.dto.SearchTmp;
+
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -96,4 +98,5 @@ public class SearchApiRepository {
 
         return jdbcTemplate.queryForObject(query, int.class, params);
     }
+
 }

@@ -1,15 +1,13 @@
 package umc.spring.ringleader.search;
 
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.config.BaseResponse;
 import umc.spring.ringleader.search.model.GetSearchListRes;
-import umc.spring.ringleader.search.model.PostSearchResultReq;
-import umc.spring.ringleader.search.model.SearchResponseDto;
+import umc.spring.ringleader.review.model.dto.SearchTmp;
 
 import java.util.List;
 

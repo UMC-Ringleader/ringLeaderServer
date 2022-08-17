@@ -233,4 +233,30 @@ public class ReviewDao {
 				Integer.class);
 	}
 
+	public List<SearchTmp> getReviews(String searchWord) {
+		String getSearchReviewsQuery = "Select *\n"
+				+ "From Review as R, User as U, UserRegionContribution as URC\n"
+				+ "WHERE U.userId = R.userId\n"
+				+ "AND URC.regionId = R.regionId\n"
+				+ "AND URC.userId = R.userId\n"
+				+ "AND(R.title LIKE concat('%',?,'%')\n"
+				+ "OR R.hashtag1 LIKE concat('%',?,'%')\n"
+				+ "OR R.hashtag2 LIKE concat('%',?,'%')\n"
+				+ "OR R.hashtag3 LIKE concat('%',?,'%'))\n"
+				+ "ORDER BY R.created_at DESC;";
+		return this.jdbcTemplate.query(getSearchReviewsQuery,
+				(rs, rowNum) -> new SearchTmp(
+						rs.getInt("userId"),
+						rs.getString("nickName"),
+						rs.getInt("contribution"),
+						rs.getInt("reviewId"),
+						rs.getString("title"),
+						rs.getString("category"),
+						rs.getString("hashtag1"),
+						rs.getString("hashtag2"),
+						rs.getString("hashtag3"),
+						rs.getString("contents")
+				), searchWord,searchWord, searchWord, searchWord);
+	}
+
 }
