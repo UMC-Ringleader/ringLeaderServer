@@ -28,17 +28,18 @@ public class ReviewDao {
 
 	public int saveReviewForThreeHashTags(PostReviewReq req) {
 		String createReviewQuery = "insert into Review ("
-			+ "title, category, hashtag1, hashtag2, hashtag3, regionId, contents, userId"
-			+ ") VALUES (?,?,?,?,?,?,?,?)";
-		Object[] createReviewParams = new Object[] {
-			req.getTitle(),
-			req.getCategory(),
-			req.getHashtags().get(0),
-			req.getHashtags().get(1),
-			req.getHashtags().get(2),
-			req.getRegionId(),
-			req.getContents(),
-			req.getUserId()
+			+ "title, category, hashtag1, hashtag2, hashtag3, regionId, contents, userId,RRDId"
+			+ ") VALUES (?,?,?,?,?,?,?,?,?)";
+		Object[] createReviewParams = new Object[]{
+				req.getTitle(),
+				req.getCategory(),
+				req.getHashtags().get(0),
+				req.getHashtags().get(1),
+				req.getHashtags().get(2),
+				req.getRegionId(),
+				req.getContents(),
+				req.getUserId(),
+				req.getRRDId()
 		}; // 동적 쿼리의 ?부분에 주입될 값
 		this.jdbcTemplate.update(createReviewQuery, createReviewParams);
 
@@ -66,15 +67,15 @@ public class ReviewDao {
 	}
 
 	public List<ReviewTmp> getReviewsByRegion(int regionId) {
-		String getReviewsQuery = "Select *\n"
-			+ "    From Review as R\n"
-			+ "        Join (Select userId, nickName from User) U on U.userId = R.userId\n"
-			+ "        Join (Select userId, contribution, regionId from UserRegionContribution as URC\n"
-			+ "            WHERE URC.regionId = ?) URC\n"
-			+ "            on URC.userId = R.userId\n"
-			+ "    WHERE R.regionId = ?\n"
-			+ "    ORDER BY R.created_at DESC;";
-		return this.jdbcTemplate.query(getReviewsQuery, new ReviewTmpMapper(), regionId, regionId);
+		String getReviewsQuery = "SELECT R.userId as userId, nickName,contribution,reviewId,rrd.title,R.title as reviewTitle,category,hashtag1,hashtag2,hashtag3,R.contents as contents\n" +
+				" From Review as R\n" +
+				"\t\t       Join (Select userId, nickName from User) U on U.userId = R.userId\n" +
+				"\t\t       Join (Select userId, contribution, regionId from UserRegionContribution as URC)\n" +
+				"\t\t           URC on URC.userId = R.userId and URC.regionId = R.regionId\n" +
+				"\t\tJoin (Select RRDId,title FROM RegionReviewDetails) rrd on rrd.RRDId = R.RRDId\n" +
+				"\t\t   WHERE R.regionId = ?\n" +
+				"\t\t   ORDER BY R.created_at DESC;";
+		return this.jdbcTemplate.query(getReviewsQuery, new ReviewTmpMapper(), regionId);
 	}
 
 	public void updateLastVisitedRegion(int userId, int regionId) {
@@ -97,16 +98,16 @@ public class ReviewDao {
 	}
 
 	public List<ReviewTmp> getUserReviewsByRegionId(int userId, int regionId) {
-		String getUserReviewQuery = "Select *\n"
-			+ "    From Review as R\n"
-			+ "        Join (Select userId, nickName from User) U on U.userId = R.userId\n"
-			+ "        Join (Select userId, contribution, regionId from UserRegionContribution as URC\n"
-			+ "            WHERE URC.regionId = ?) URC\n"
-			+ "            on URC.userId = R.userId\n"
-			+ "    WHERE R.regionId = ?\n AND R.userId = ?"
-			+ "    ORDER BY R.created_at DESC;";
+		String getUserReviewQuery = "SELECT R.contents as contents ,R.userId as userId, nickName,contribution,reviewId,rrd.title as title ,R.title as reviewTitle,category,hashtag1,hashtag2,hashtag3\n" +
+				" From Review as R\n" +
+				"\t\t       Join (Select userId, nickName from User) U on U.userId = R.userId\n" +
+				"\t\t       Join (Select userId, contribution, regionId from UserRegionContribution as URC)\n" +
+				"\t\t           URC on URC.userId = R.userId and URC.regionId = R.regionId\n" +
+				"\t\tJoin (Select RRDId,title FROM RegionReviewDetails) rrd on rrd.RRDId = R.RRDId\n" +
+				"\t\t   WHERE R.regionId = ? AND R.userId = ?\n" +
+				"\t\t   ORDER BY R.created_at DESC;";
 		return this.jdbcTemplate.query(getUserReviewQuery,
-			new ReviewTmpMapper(), regionId, regionId, userId);
+			new ReviewTmpMapper(), regionId, userId);
 	}
 
 	public List<String> getReviewImgs(int reviewId) {
@@ -180,32 +181,34 @@ public class ReviewDao {
 		@Override
 		public ReviewTmp mapRow(ResultSet rs, int rowNum) throws SQLException {
 			return new ReviewTmp(
-				rs.getInt("userId"),
-				rs.getString("nickName"),
-				rs.getInt("contribution"),
-				rs.getInt("reviewId"),
-				rs.getString("title"),
-				rs.getString("category"),
-				rs.getString("hashtag1"),
-				rs.getString("hashtag2"),
-				rs.getString("hashtag3"),
-				rs.getString("contents")
+					rs.getInt("userId"),
+					rs.getString("nickName"),
+					rs.getInt("contribution"),
+					rs.getInt("reviewId"),
+					rs.getString("title"),
+					rs.getString("reviewTitle"),
+					rs.getString("category"),
+					rs.getString("hashtag1"),
+					rs.getString("hashtag2"),
+					rs.getString("hashtag3"),
+					rs.getString("contents")
 			);
 		}
 	}
 
 	public int saveReviewForTwoHashTags(PostReviewReq req) {
 		String createReviewQuery = "insert into Review ("
-				+ "title, category, hashtag1, hashtag2, regionId, contents, userId"
-				+ ") VALUES (?,?,?,?,?,?,?)";
-		Object[] createReviewParams = new Object[] {
+				+ "title, category, hashtag1, hashtag2, regionId, contents, userId,RRDId"
+				+ ") VALUES (?,?,?,?,?,?,?,?)";
+		Object[] createReviewParams = new Object[]{
 				req.getTitle(),
 				req.getCategory(),
 				req.getHashtags().get(0),
 				req.getHashtags().get(1),
 				req.getRegionId(),
 				req.getContents(),
-				req.getUserId()
+				req.getUserId(),
+				req.getRRDId()
 		}; // 동적 쿼리의 ?부분에 주입될 값
 		this.jdbcTemplate.update(createReviewQuery, createReviewParams);
 
@@ -216,15 +219,16 @@ public class ReviewDao {
 
 	public int saveReviewForSingleHashTag(PostReviewReq req) {
 		String createReviewQuery = "insert into Review ("
-				+ "title, category, hashtag1,regionId, contents, userId"
-				+ ") VALUES (?,?,?,?,?,?)";
-		Object[] createReviewParams = new Object[] {
+				+ "title, category, hashtag1,regionId, contents, userId,RRDId"
+				+ ") VALUES (?,?,?,?,?,?,?)";
+		Object[] createReviewParams = new Object[]{
 				req.getTitle(),
 				req.getCategory(),
 				req.getHashtags().get(0),
 				req.getRegionId(),
 				req.getContents(),
-				req.getUserId()
+				req.getUserId(),
+				req.getRRDId()
 		}; // 동적 쿼리의 ?부분에 주입될 값
 		this.jdbcTemplate.update(createReviewQuery, createReviewParams);
 

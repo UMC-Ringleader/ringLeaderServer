@@ -19,6 +19,7 @@ public class ReviewTmp {
 	private int userContribution;
 	private int reviewId;
 	private String title;
+	private String reviewTitle;
 	private String category;
 	private String hashtag1;
 	private String hashtag2;
@@ -31,6 +32,7 @@ public class ReviewTmp {
 			userContribution,
 			reviewId,
 			title,
+			reviewTitle,
 			category,
 			hashtag1,
 			hashtag2,
@@ -49,6 +51,7 @@ public class ReviewTmp {
 				userContribution,
 				reviewId,
 				title,
+				reviewTitle,
 				category,
 				hashtag1,
 				hashtag2,

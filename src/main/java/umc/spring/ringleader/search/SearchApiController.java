@@ -38,10 +38,8 @@ public class SearchApiController {
     public BaseResponse<List<GetSearchListRes>> getSavedList(@RequestParam String keyword) {
         try {
             List<GetSearchListRes> getSearchListRes = searchApiService.searchDataBase(keyword);
-            if (getSearchListRes.size() == 0) {
-                return new BaseResponse<>(searchApiService.searchLocal(keyword));
-            }
-            return new BaseResponse<>(getSearchListRes);
+            List<GetSearchListRes> apiSearchedList = searchApiService.searchLocal(keyword);
+            return new BaseResponse<>(searchApiService.deduplicationList(getSearchListRes,apiSearchedList));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

@@ -49,7 +49,8 @@ public class SearchApiRepository {
                 (rs, rowNum) -> new GetSearchListRes(
                         rs.getInt("RRDId"),
                         rs.getString("title"),
-                        rs.getString("address")
+                        rs.getString("address"),
+                        rs.getString("category")
                 ), param
         );
     }
@@ -69,7 +70,8 @@ public class SearchApiRepository {
                 (rs, rowNum) -> new GetSearchListRes(
                         rs.getInt("RRDId"),
                         rs.getString("title"),
-                        rs.getString("address")
+                        rs.getString("address"),
+                        rs.getString("category")
                 )
                 , param);
     }
@@ -83,7 +85,8 @@ public class SearchApiRepository {
                 (rs, rowNum) -> new GetSearchListRes(
                         rs.getInt("RRDId"),
                         rs.getString("title"),
-                        rs.getString("address")
+                        rs.getString("address"),
+                        rs.getString("category")
                 )
                 ,params);
     }

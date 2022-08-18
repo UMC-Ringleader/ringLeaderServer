@@ -13,4 +13,5 @@ public class GetSearchListRes {
     private int RRDId;
     private String title;
     private String address;
+    private String category;
 }

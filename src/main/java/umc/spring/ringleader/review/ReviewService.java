@@ -21,6 +21,7 @@ import umc.spring.ringleader.report.model.CheckingNonconformity;
 import umc.spring.ringleader.feedback.model.dto.ReviewFeedBacks;
 import umc.spring.ringleader.report.ReportService;
 import umc.spring.ringleader.review.model.dto.*;
+import umc.spring.ringleader.search.SearchApiService;
 
 @Slf4j
 @Service
@@ -31,20 +32,22 @@ public class ReviewService {
 	private final FeedbackService feedbackService;
 	private final ReportService reportService;
 	private final ReportRepository reportRepository;
+	private final SearchApiService searchApiService;
 
 	@Autowired
-	public ReviewService(ReviewDao reviewDao, ContributionService contributionService,
-						 FeedbackService feedbackService, ReportService reportService, ReportRepository reportRepository) {
+	public ReviewService(ReviewDao reviewDao, ContributionService contributionService, FeedbackService feedbackService,
+						 ReportService reportService, ReportRepository reportRepository, SearchApiService searchApiService) {
 		this.reviewDao = reviewDao;
 		this.contributionService = contributionService;
 		this.feedbackService = feedbackService;
 		this.reportService = reportService;
 		this.reportRepository = reportRepository;
+		this.searchApiService = searchApiService;
 	}
-
 
 	public PostReviewRes saveReview(PostReviewReq req) throws BaseException {
 		int savedId;
+		req.setCategory(searchApiService.defineCategory(req.getCategory()));
 		try {
 			if (req.getHashtags().size() == 3) {
 				savedId = reviewDao.saveReviewForThreeHashTags(req);
