@@ -1,4 +1,4 @@
-package umc.spring.ringleader.contribution1.model;
+package umc.spring.ringleader.contribution.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

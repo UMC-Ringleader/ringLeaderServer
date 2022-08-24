@@ -1,19 +1,19 @@
-package umc.spring.ringleader.contribution1;
+package umc.spring.ringleader.contribution;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import umc.spring.ringleader.contribution1.model.ContributionRanking;
-import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
-import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
+import umc.spring.ringleader.contribution.model.ContributionRanking;
+import umc.spring.ringleader.contribution.model.ContributionWithLocation;
+import umc.spring.ringleader.contribution.model.ContributionWithNickNameByReviewId;
+import umc.spring.ringleader.contribution.model.Grade;
 import umc.spring.ringleader.region.RegionService;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static umc.spring.ringleader.config.Constant.DAILY_FIRST_LOGIN_COMPENSATION;
+import static umc.spring.ringleader.config.Constant.*;
 
 @Service
 @EnableScheduling
@@ -83,4 +83,52 @@ public class ContributionService {
             repository.updateContribution(userId, regionId, DAILY_FIRST_LOGIN_COMPENSATION);
         }
     }
+
+    public int getContribution(int userId, int regionId) {
+        return repository.getContribution(userId, regionId);
+    }
+
+
+    // Contribution 을 통한 User Grade
+    public Grade getGradeByContribution(int contribution) {
+        if (contribution < (FLAG_SHAPE_GAP*1)) {
+            return new Grade("grade1", getFlagColor(contribution));
+        }
+        else if (contribution < (FLAG_SHAPE_GAP*2)) {
+            return new Grade("grade2", getFlagColor(contribution - (FLAG_SHAPE_GAP*1)));
+        }
+        else if (contribution < (FLAG_SHAPE_GAP*3)) {
+            return new Grade("grade3", getFlagColor(contribution - (FLAG_SHAPE_GAP*2)));
+        }
+        else if (contribution < (FLAG_SHAPE_GAP*4)) {
+            return new Grade("grade4", getFlagColor(contribution - (FLAG_SHAPE_GAP*3)));
+        }
+        else if (contribution < (FLAG_SHAPE_GAP*5)) {
+            return new Grade("grade5", getFlagColor(contribution - (FLAG_SHAPE_GAP*4)));
+        }
+        else {
+            return new Grade("grade6", getFlagColor(contribution - (FLAG_SHAPE_GAP*5)));
+        }
+    }
+
+
+    private String getFlagColor(int score) {
+        if (score < (FLAG_COLOR_GAP*1)) {
+            return "red";
+        }
+        else if (score < (FLAG_COLOR_GAP*2)) {
+            return "orange";
+        }
+        else if (score < (FLAG_COLOR_GAP*3)) {
+            return "yellow";
+        }
+        else if (score < (FLAG_COLOR_GAP*4)) {
+            return "green";
+        }
+        else {
+            return "blue";
+        }
+    }
+
+
 }

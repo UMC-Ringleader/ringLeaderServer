@@ -1,17 +1,16 @@
-package umc.spring.ringleader.contribution1;
+package umc.spring.ringleader.contribution;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import umc.spring.ringleader.config.BaseException;
 import umc.spring.ringleader.config.BaseResponse;
-import umc.spring.ringleader.contribution1.model.ContributionRanking;
-import umc.spring.ringleader.contribution1.model.ContributionWithLocation;
-import umc.spring.ringleader.contribution1.model.ContributionWithNickNameByReviewId;
+import umc.spring.ringleader.contribution.model.ContributionRanking;
+import umc.spring.ringleader.contribution.model.Grade;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -31,6 +30,8 @@ public class ContributionController {
      * @return
      */
     //ex) localhost:8100/contributions/ranking?regionId=2
+    @ApiOperation(value = "Region별 기여도 순위 조회")
+    @ApiImplicitParam(name = "regionId" ,value = "지역 식별자", required = true)
     @GetMapping("/ranking")
     public BaseResponse<List<ContributionRanking>> getRankingByRegionId(@RequestParam int regionId) {
         log.info("[Contribution][GET] : Region별 랭킹조회 api / regionId = {}", regionId);
@@ -45,15 +46,24 @@ public class ContributionController {
      */
     //ip:port/contribution/ranking/{userIdx}?/?regionId=?
     //ex) localhost:8100/contributions/ranking/1?regionId=2
+    @ApiOperation(value = "User의 개인 랭킹 조회")
+    @ApiImplicitParam(name = "userId" ,value = "유저 식별자", required = true)
     @GetMapping("/ranking/{userId}")
     public BaseResponse<ContributionRanking> getUserRanking(@RequestParam int regionId, @PathVariable int userId) {
         log.info("[Contribution][GET] : User 개인 랭킹조회 api / regionId = {}, userId = {}", regionId, userId);
         ContributionRanking result = service.getRankingByUserId(userId, regionId).get();
-        /*if (result.equals(null)) {
-            return new BaseException();
-        }
-        else{*/
-            return new BaseResponse<>(result);
 
+        return new BaseResponse<>(result);
+
+    }
+
+
+    // grade test
+    @GetMapping("/grade/{userId}")
+    public BaseResponse<Grade> getUserGrade(@RequestParam int regionId, @PathVariable int userId) {
+        log.info("[Contribution][GET] : User 개인 랭킹조회 api / regionId = {}, userId = {}", regionId, userId);
+        int contribution = service.getContribution(userId, regionId);
+        Grade result = service.getGradeByContribution(contribution);
+        return new BaseResponse<>(result);
     }
 }

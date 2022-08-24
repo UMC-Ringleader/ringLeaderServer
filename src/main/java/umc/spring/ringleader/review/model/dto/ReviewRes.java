@@ -19,6 +19,7 @@ public class ReviewRes {
 	private int userContribution;
 	private int reviewId;
 	private String title;
+	private String reviewTitle;
 	private String category;
 	private String hashtag1;
 	private String hashtag2;

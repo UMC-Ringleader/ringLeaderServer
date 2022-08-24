@@ -1,5 +1,8 @@
 package umc.spring.ringleader.report;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import umc.spring.ringleader.config.BaseResponse;
@@ -19,6 +22,7 @@ public class ReportController {
         this.reportService = reportService;
     }
 
+    @ApiOperation(value = "신고 사유 목록 조회")
     @GetMapping("/lists")
     public BaseResponse<List<String>> getReportingList() {
         Report report = new Report();
@@ -27,6 +31,12 @@ public class ReportController {
         return new BaseResponse<>(reportingContents);
     }
 
+    @ApiOperation(value = "신고 생성")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "reportedContent" ,value = "신고 사유", required = true),
+            @ApiImplicitParam(name = "reviewViewerId" ,value = "로그인 된 유저 식별자", required = true),
+            @ApiImplicitParam(name = "reviewId" ,value = "Review 식별자", required = true)
+    })
     @PostMapping("")
     public BaseResponse<String> createReport(@RequestBody PostReportReq postReportReq) {
         int reportResult = reportService.createReport(postReportReq);

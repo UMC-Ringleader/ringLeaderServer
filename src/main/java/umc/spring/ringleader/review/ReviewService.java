@@ -1,5 +1,6 @@
 package umc.spring.ringleader.review;
 
+import static umc.spring.ringleader.config.BaseResponseStatus.POST_REVIEW_FAILED_IN_SERVER;
 import static umc.spring.ringleader.config.Constant.*;
 
 import java.time.LocalDate;
@@ -12,13 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import umc.spring.ringleader.contribution1.ContributionService;
+import umc.spring.ringleader.config.BaseException;
+import umc.spring.ringleader.contribution.ContributionService;
 import umc.spring.ringleader.feedback.FeedbackService;
 import umc.spring.ringleader.report.ReportRepository;
 import umc.spring.ringleader.report.model.CheckingNonconformity;
 import umc.spring.ringleader.feedback.model.dto.ReviewFeedBacks;
 import umc.spring.ringleader.report.ReportService;
 import umc.spring.ringleader.review.model.dto.*;
+import umc.spring.ringleader.search.SearchApiService;
 
 @Slf4j
 @Service
@@ -29,21 +32,34 @@ public class ReviewService {
 	private final FeedbackService feedbackService;
 	private final ReportService reportService;
 	private final ReportRepository reportRepository;
+	private final SearchApiService searchApiService;
 
 	@Autowired
-	public ReviewService(ReviewDao reviewDao, ContributionService contributionService,
-						 FeedbackService feedbackService, ReportService reportService, ReportRepository reportRepository) {
+	public ReviewService(ReviewDao reviewDao, ContributionService contributionService, FeedbackService feedbackService,
+						 ReportService reportService, ReportRepository reportRepository, SearchApiService searchApiService) {
 		this.reviewDao = reviewDao;
 		this.contributionService = contributionService;
 		this.feedbackService = feedbackService;
 		this.reportService = reportService;
 		this.reportRepository = reportRepository;
+		this.searchApiService = searchApiService;
 	}
 
+	public PostReviewRes saveReview(PostReviewReq req) throws BaseException {
+		int savedId;
+		req.setCategory(searchApiService.defineCategory(req.getCategory()));
+		try {
+			if (req.getHashtags().size() == 3) {
+				savedId = reviewDao.saveReviewForThreeHashTags(req);
+			} else if (req.getHashtags().size() == 2) {
+				savedId = reviewDao.saveReviewForTwoHashTags(req);
+			} else {
+				savedId = reviewDao.saveReviewForSingleHashTag(req);
+			}
+		} catch (Exception e) {
+			throw new BaseException(POST_REVIEW_FAILED_IN_SERVER);
+		}
 
-
-	public PostReviewRes saveReview(PostReviewReq req) {
-		int savedId = reviewDao.saveReview(req);
 
 		//Image가 없는 경우 기여도 + 5
 		if (req.getPostImages() == null) {
@@ -71,7 +87,7 @@ public class ReviewService {
 
 	// 매일 00시에 4일전 리뷰에 대한 인센티브 여부 확인 및 점수 부여
 	@Scheduled(cron = "0 0 0 * * *")
-	public void checkIncentive(){
+	public void checkIncentive() {
 		// 4일 이전 리뷰
 		log.info("인센티브 메서드 실행");
 		List<ReviewIncentiveTemp> reviewListToCheckIncentive = getReviewListToCheckIncentive();
@@ -88,14 +104,13 @@ public class ReviewService {
 
 
 	// 인센티브 부여 조건 충족 판단 메서드
-	private boolean isValidIncentive(int reviewId){
+	private boolean isValidIncentive(int reviewId) {
 		CheckingNonconformity reportedAndFeedbackCount = reportRepository.getReportedAndFeedbackCount(reviewId);
 		int sum = reportedAndFeedbackCount.getFeedbackCount() + reportedAndFeedbackCount.getReportedCount();
-		double rate = reportedAndFeedbackCount.getFeedbackCount()/sum;
+		double rate = reportedAndFeedbackCount.getFeedbackCount() / sum;
 		if (sum >= INCENTIVE_VALID_FEEDBACK_COUNT && rate >= INCENTIVE_VALID_FEEDBACK_RATE) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -107,17 +122,17 @@ public class ReviewService {
 		if (reviewDao.isImageExist(deleteId)) {
 			// 점수 차감 (-10)
 			contributionService.contributionUpdate(
-				tempReview.getUserId(),
-				tempReview.getRegionId(),
-				DELETE_IMG_REVIEW);
+					tempReview.getUserId(),
+					tempReview.getRegionId(),
+					DELETE_IMG_REVIEW);
 			reviewDao.deleteReviewImages(deleteId);
 		}
 		// 이미지 없으면 (-5)
 		else {
 			contributionService.contributionUpdate(
-				tempReview.getUserId(),
-				tempReview.getRegionId(),
-				DELETE_NOT_IMG_REVIEW);
+					tempReview.getUserId(),
+					tempReview.getRegionId(),
+					DELETE_NOT_IMG_REVIEW);
 		}
 		//ReviewId로 Image삭제, Review 삭제
 		int deleteCode = reviewDao.deleteReview(deleteId);
@@ -175,11 +190,11 @@ public class ReviewService {
 			for (ReviewTmp reviewTmp : reviewTmps) {
 				List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
 				reviewResList.add(
-					reviewTmp.toReviewRes(
-						reviewImgs,
-						feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId()),
-						false
-					)
+						reviewTmp.toReviewRes(
+								reviewImgs,
+								feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId()),
+								false
+						)
 				);
 			}
 		}
@@ -190,13 +205,13 @@ public class ReviewService {
 				List<String> reviewImgs = reviewDao.getReviewImgs(reviewTmp.getReviewId());
 
 				boolean isBookmarked =
-					reviewDao.existingBookmark(loginUserId, reviewTmp.getReviewId()) == 1; //1인경우 북마크된 리뷰
+						reviewDao.existingBookmark(loginUserId, reviewTmp.getReviewId()) == 1; //1인경우 북마크된 리뷰
 				reviewResList.add(
-					reviewTmp.toReviewRes(
-						reviewImgs,
-						feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId()),
-						isBookmarked
-					)
+						reviewTmp.toReviewRes(
+								reviewImgs,
+								feedbackService.getFeedbacksByReviewId(reviewTmp.getReviewId()),
+								isBookmarked
+						)
 				);
 			}
 		}
@@ -214,27 +229,28 @@ public class ReviewService {
 		return reviewDao.getReviewListToCheckIncentive(editDateStart, editDateEnd);
 	}
 
-	public ReviewRes getReviewByReviewId(Integer loginId,int reviewId) {
+	public ReviewRes getReviewByReviewId(Integer loginId, int reviewId) {
 		ReviewTmp reviewByReviewId = reviewDao.getReviewByReviewId(reviewId);
 		List<String> reviewImgs = reviewDao.getReviewImgs(reviewId);
 		ReviewFeedBacks feedbacksByReviewId = feedbackService.getFeedbacksByReviewId(reviewId);
 
 		if (reportService.checkNonconformity(reviewId)) {
 			String reportedContent = reportService.reportSuggestion(reviewId);
-			if(loginId==null) {
-				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, false,reportedContent);
-			}
-			else{
+			if (loginId == null) {
+				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, false, reportedContent);
+			} else {
 				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, true, reportedContent);
 			}
-		}
-		else{
+		} else {
 			if (loginId == null) {
 				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, false);
-			}
-			else{
+			} else {
 				return reviewByReviewId.toReviewRes(reviewImgs, feedbacksByReviewId, true);
 			}
 		}
+	}
+
+	public List<SearchTmp> getSearchReviews(String searchWord) {
+		return reviewDao.getReviews(searchWord);
 	}
 }
